@@ -34,13 +34,13 @@ run = True
 while run:
 
     clock.tick(FPS)
-    
+
     # Draw background
     draw_bg()
 
     # Move fighters
-    fighter_1.move()
-    fighter_2.move()
+    fighter_1.move(SCREEN_WIDTH, SCREEN_HEIGHT)
+    fighter_2.move(SCREEN_WIDTH, SCREEN_HEIGHT)
 
     # Draw fighters
     fighter_1.draw(screen)
