@@ -85,8 +85,8 @@ class Fighter():
                 target.hit = True
             pygame.draw.rect(debug_surf, (0, 255, 0), attacking_rect)
 
-    def draw(self, surface):
-        pygame.draw.rect(surface, (255, 0, 0), self.rect)
+    def draw(self, surface, color):
+        pygame.draw.rect(surface, color, self.rect)
 
     def update(self):
         if self.health <= 0:

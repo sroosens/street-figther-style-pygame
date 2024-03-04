@@ -7,6 +7,7 @@ pygame.init()
 # Defines
 SCREEN_WIDTH = 768
 SCREEN_HEIGHT = 494
+RED = (255, 0, 0)
 BLUE = (0, 0, 255)
 WHITE = (255, 255, 255)
 FONT = pygame.font.Font("assets/fonts/VCR_OSD_MONO_1.001.ttf", 30)
@@ -69,8 +70,8 @@ while run:
     fighter_2.update()
 
     # Draw fighters
-    fighter_1.draw(screen)
-    fighter_2.draw(screen)
+    fighter_1.draw(screen, RED)
+    fighter_2.draw(screen, BLUE)
 
     # Manage rounds
     if round_over == False:
