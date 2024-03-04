@@ -1,23 +1,18 @@
 import pygame
 
 class Fighter():
-    def __init__(self, player, x, y):
-        self.rect = pygame.Rect((x, y, 80, 180))
+    def __init__(self, controls, flip, x, y):
+        self.rect = pygame.Rect(x, y, 80, 180)
         self.vel_y = 0
         self.jump = False
         self.health = 100
         self.hit = False
         self.alive = True
+        self.flip = flip
         self.attacking = False
         self.attack_cooldown = 0
         self.attack_type = 0 # 1: punch ; 2: kick
-        self.controls = {
-            'left': pygame.K_q if player == 1 else pygame.K_k,
-            'right': pygame.K_d if player == 1 else pygame.K_m,
-            'jump': pygame.K_z if player == 1 else pygame.K_o,
-            'attack1': pygame.K_a if player == 1 else pygame.K_i,
-            'attack2': pygame.K_e if player == 1 else pygame.K_p
-        }
+        self.controls = controls
         
     def move(self, screen_width, screen_height, debug_surf, target, round_over):
         # Defines
@@ -47,6 +42,11 @@ class Fighter():
         if self.attack_cooldown > 0:
             self.attack_cooldown -= 1
 
+        if target.rect.centerx > self.rect.centerx:
+            self.flip = False
+        else:
+            self.flip = True
+
         # Apply gravity
         self.vel_y += GRAVITY
         dy += self.vel_y 
@@ -71,14 +71,14 @@ class Fighter():
             if self.attack_type == 1:
                 print("punch")
                 self.attack_cooldown = 10
-                attacking_rect = pygame.Rect(self.rect.centerx, self.rect.y, self.rect.width * 2, self.rect.height / 2)
+                attacking_rect = pygame.Rect(self.rect.centerx - (2 * self.rect.width * self.flip), self.rect.y, self.rect.width * 2, self.rect.height / 2)
             elif self.attack_type == 2:
                 print("kick")
                 self.attack_cooldown = 15
-                attacking_rect = pygame.Rect(self.rect.centerx, self.rect.centery, self.rect.width * 2, self.rect.height / 2)
+                attacking_rect = pygame.Rect(self.rect.centerx - (2 * self.rect.width * self.flip), self.rect.centery, self.rect.width * 2, self.rect.height / 2)
             else:
                 print("no attack")
-                attacking_rect = pygame.Rect(self.rect.centerx, self.rect.y, self.rect.width * 2, self.rect.height)
+                attacking_rect = pygame.Rect(self.rect.centerx - (2 * self.rect.width * self.flip), self.rect.y, self.rect.width * 2, self.rect.height)
         
             if attacking_rect.colliderect(target.rect):
                 target.health -= 10

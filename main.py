@@ -25,6 +25,23 @@ FPS = 60
 score = [0, 0]
 round_over = False
 
+# Action keys
+controls_p1 = {
+            'left': pygame.K_q,
+            'right': pygame.K_d,
+            'jump': pygame.K_z,
+            'attack1': pygame.K_a,
+            'attack2': pygame.K_e
+        }
+
+controls_p2 = {
+            'left': pygame.K_k,
+            'right': pygame.K_m,
+            'jump': pygame.K_o,
+            'attack1': pygame.K_i,
+            'attack2': pygame.K_p
+        }
+
 # Configure background
 bg_image = pygame.image.load("assets/images/background/japan_1.png").convert_alpha()
 
@@ -45,8 +62,8 @@ def draw_text(text, font, text_col, x, y):
   screen.blit(img, (x, y))
 
 # Create instances of fighter
-fighter_1 = Fighter(100, 280, 1)
-fighter_2 = Fighter(600, 280, 2)
+fighter_1 = Fighter(controls_p1, False, 100, 280)
+fighter_2 = Fighter(controls_p2, True, 600, 280)
 
 # Game loop
 run = True
