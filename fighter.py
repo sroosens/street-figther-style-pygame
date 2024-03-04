@@ -16,9 +16,9 @@ class Fighter():
         # Keyboard
         key = pygame.key.get_pressed()
         # Movement
-        if key[pygame.K_q]: # Left
+        if key[pygame.K_q]:                        # Left
             dx = -SPEED
-        if key[pygame.K_d]: # Right
+        if key[pygame.K_d]:                        # Right
             dx = SPEED
         if key[pygame.K_z] and self.jump == False: # Jump
             self.vel_y = -30
