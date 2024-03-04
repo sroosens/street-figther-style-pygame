@@ -1,9 +1,16 @@
 import pygame
 
 class Fighter():
-    def __init__(self, controls, flip, x, y):
-        self.rect = pygame.Rect(x, y, 80, 180)
+    def __init__(self, controls, flip, x, y, sprite_sheet, animation_steps):
+        self.rect = pygame.Rect(x, y, 80, 200)
         self.vel_y = 0
+        self.size = 80
+        self.image_scale = 3
+        self.animation_list = self.fetch_sprites(sprite_sheet, animation_steps)
+        self.action = 1
+        self.offset = [20, 10]
+        self.frame_index = 0
+        self.image = self.animation_list[self.action][self.frame_index]
         self.jump = False
         self.health = 100
         self.hit = False
@@ -13,7 +20,17 @@ class Fighter():
         self.attack_cooldown = 0
         self.attack_type = 0 # 1: punch ; 2: kick
         self.controls = controls
-        
+
+    def fetch_sprites(self, sprite_sheet, animation_steps):
+        animation_list = []
+        for y, animation in enumerate(animation_steps):
+            temp_img_list = []
+            for x in range(animation):
+                temp_img = sprite_sheet.subsurface(x * self.size, y * self.size, self.size, self.size)
+                temp_img_list.append(pygame.transform.scale(temp_img, (self.size * self.image_scale, self.size * self.image_scale)))
+            animation_list.append(temp_img_list)
+        return animation_list
+
     def move(self, screen_width, screen_height, debug_surf, target, round_over):
         # Defines
         SPEED = 5
@@ -87,6 +104,8 @@ class Fighter():
 
     def draw(self, surface, color):
         pygame.draw.rect(surface, color, self.rect)
+        img = pygame.transform.flip(self.image, self.flip, False)
+        surface.blit(img, (self.rect.x - (self.offset[0] * self.image_scale), self.rect.y - (self.offset[1] * self.image_scale)))
 
     def update(self):
         if self.health <= 0:

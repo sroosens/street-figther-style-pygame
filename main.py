@@ -45,6 +45,12 @@ controls_p2 = {
 # Configure background
 bg_image = pygame.image.load("assets/images/background/japan_1.png").convert_alpha()
 
+# Load sprite sheets
+chara_sheet = pygame.image.load("assets/sprites/ken.png").convert_alpha()
+
+# Define number of steps in each animation
+CHARA_ANIMATION_STEPS = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+
 # Function for drawing background
 def draw_bg():
     scaled_bg = pygame.transform.scale(bg_image, (SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -62,8 +68,8 @@ def draw_text(text, font, text_col, x, y):
   screen.blit(img, (x, y))
 
 # Create instances of fighter
-fighter_1 = Fighter(controls_p1, False, 100, 280)
-fighter_2 = Fighter(controls_p2, True, 600, 280)
+fighter_1 = Fighter(controls_p1, False, 100, 280, chara_sheet, CHARA_ANIMATION_STEPS)
+fighter_2 = Fighter(controls_p2, True, 600, 280, chara_sheet, CHARA_ANIMATION_STEPS)
 
 # Game loop
 run = True
