@@ -1,6 +1,10 @@
 import pygame
 
 class Fighter():
+    # Defines
+    SPEED = 5
+    GRAVITY = 2
+
     def __init__(self, controls, flip, x, y, sprite_sheet, animation_steps):
         self.rect = pygame.Rect(x, y, 70, 160)
         self.vel_y = 0
@@ -37,10 +41,6 @@ class Fighter():
         return animation_list
 
     def move(self, screen_width, screen_height, debug_surf, target, round_over):
-        # Defines
-        SPEED = 5
-        GRAVITY = 2
-
         # Reset variables
         dx = 0
         dy = 0
@@ -53,10 +53,10 @@ class Fighter():
         key = pygame.key.get_pressed()
 
         if key[self.controls['left']]:
-            dx = -SPEED
+            dx = -self.SPEED
             self.running = True
         if key[self.controls['right']]:
-            dx = SPEED
+            dx = self.SPEED
             self.running = True
         if key[self.controls['jump']] and not self.jumping:
             self.vel_y = -30
@@ -87,7 +87,71 @@ class Fighter():
             self.flip = True
 
         # Apply gravity
-        self.vel_y += GRAVITY
+        self.vel_y += self.GRAVITY
+        dy += self.vel_y 
+
+        # Ensure fighter stays on screen
+        if self.rect.left + dx < 0:                     # Left limit
+            dx = -self.rect.left
+        if self.rect.right + dx > screen_width:         # Right limit
+            dx = screen_width - self.rect.right
+        if self.rect.bottom + dy > screen_height - 30:  # Bottom limit
+            self.vel_y = 0
+            self.jumping = False
+            dy = screen_height - 30 - self.rect.bottom
+        
+        # Update fighter position
+        self.rect.x += dx
+        self.rect.y += dy
+
+    def move_agent(self, screen_width, screen_height, debug_surf, target, round_over, action):
+        # Reset variables
+        dx = 0
+        dy = 0
+        self.running = False
+        self.crouching = False
+        self.rect.height = 160
+        self.offset = [15, 0]
+
+        # Get key pressed
+        key = pygame.key.get_pressed()
+
+        if action == 0: #left
+            dx = -self.SPEED
+            self.running = True
+        if action == 1: # right
+            dx = self.SPEED
+            self.running = True
+        if action == 2 and not self.jumping:
+            self.vel_y = -30
+            self.jumping = True
+        if action == 3:
+            self.crouching = True
+            self.rect.height = 80
+            self.rect.y = screen_height - 30
+            self.offset = [15, 40]
+
+        # Allow attack while doing movements    
+        if action == 3 or action == 4:
+            if action == 3:
+                self.attack_type = 1
+            if action == 4:
+                self.attack_type = 2
+            self.attack(debug_surf, target)
+
+        if self.attack_cooldown > 0:
+            self.attack_cooldown -= 1
+        else:
+            self.punching = False
+            self.attacking = False
+
+        if target.rect.centerx > self.rect.centerx:
+            self.flip = False
+        else:
+            self.flip = True
+
+        # Apply gravity
+        self.vel_y += self.GRAVITY
         dy += self.vel_y 
 
         # Ensure fighter stays on screen
