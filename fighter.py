@@ -40,11 +40,14 @@ class Fighter():
         # Defines
         SPEED = 5
         GRAVITY = 2
+
+        # Reset variables
         dx = 0
         dy = 0
         self.running = False
         self.crouching = False
         self.rect.height = 160
+        self.offset = [15, 0]
 
         # Get key pressed
         key = pygame.key.get_pressed()
@@ -62,6 +65,7 @@ class Fighter():
             self.crouching = True
             self.rect.height = 80
             self.rect.y = screen_height - 30
+            self.offset = [15, 40]
 
         # Allow attack while doing movements    
         if key[self.controls['attack1']] or key[self.controls['attack2']]:
