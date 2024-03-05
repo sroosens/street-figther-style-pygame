@@ -30,6 +30,7 @@ controls_p1 = {
             'left': pygame.K_q,
             'right': pygame.K_d,
             'jump': pygame.K_z,
+            'crouch': pygame.K_s,
             'attack1': pygame.K_a,
             'attack2': pygame.K_e
         }
@@ -38,6 +39,7 @@ controls_p2 = {
             'left': pygame.K_k,
             'right': pygame.K_m,
             'jump': pygame.K_o,
+            'crouch' : pygame.K_l,
             'attack1': pygame.K_i,
             'attack2': pygame.K_p
         }
@@ -49,7 +51,7 @@ bg_image = pygame.image.load("assets/images/background/japan_1.png").convert_alp
 chara_sheet = pygame.image.load("assets/sprites/ken.png").convert_alpha()
 
 # Define number of steps in each animation
-CHARA_ANIMATION_STEPS = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+CHARA_ANIMATION_STEPS = [5, 3, 3, 5, 1, 1, 1, 1, 7, 1]
 
 # Function for drawing background
 def draw_bg():
