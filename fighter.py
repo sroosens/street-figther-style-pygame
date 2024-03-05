@@ -52,17 +52,19 @@ class Fighter():
         if key[self.controls['left']]:
             dx = -SPEED
             self.running = True
-        elif key[self.controls['right']]:
+        if key[self.controls['right']]:
             dx = SPEED
             self.running = True
-        elif key[self.controls['jump']] and not self.jumping:
+        if key[self.controls['jump']] and not self.jumping:
             self.vel_y = -30
             self.jumping = True
-        elif key[self.controls['crouch']]:
+        if key[self.controls['crouch']]:
             self.crouching = True
             self.rect.height = 80
             self.rect.y = screen_height - 30
-        elif key[self.controls['attack1']] or key[self.controls['attack2']]:
+
+        # Allow attack while doing movements    
+        if key[self.controls['attack1']] or key[self.controls['attack2']]:
             if key[self.controls['attack1']]:
                 self.attack_type = 1
             if key[self.controls['attack2']]:
