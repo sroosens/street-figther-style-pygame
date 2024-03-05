@@ -88,19 +88,8 @@ class SFGameEnv(gym.Env):
     def step(self, action):
         self.fighter_1.move(SCREEN_WIDTH, SCREEN_HEIGHT, self.screen, self.fighter_2, self.round_over)
         self.fighter_2.move_agent(SCREEN_WIDTH, SCREEN_HEIGHT, self.screen, self.fighter_1, self.round_over, action)
-
-        if action == 0:
-            print("action 0")
-        elif action == 1: 
-            print("action 1")
-        elif action == 2:
-            print("action 2")
-        elif action == 3:
-            print("action 3")
-        print("step")
         reward = 1.0
-        done = True
-        return 0, reward, done, {}
+        return 0, reward, True, {}
 
     def render(self):
         print("render")
