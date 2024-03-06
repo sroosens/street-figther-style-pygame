@@ -21,12 +21,18 @@ clock = pygame.time.Clock()
 FPS = 60
 
 done = False
+stop = False
+
+print("Beging training.\n")
 
 # Run the session X times
 for i in range(1, 10):
     print(f"Episode: {i}")
     obs_t = env.reset()
     done = False
+    
+    if stop:
+        break
 
     # Train
     while not done:
@@ -37,15 +43,16 @@ for i in range(1, 10):
 
         #print('Reward:', reward)
         #print('Done:', done)
-        #print('Observations:', obs)
+        print('Observations:', obs)
 
         # Event handlera
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                stop = True
                 done = True
 
         #pygame.time.wait(10)
             
-print("Game terminated")
+print("Training finished.\n")
 # Exit game
 pygame.quit()

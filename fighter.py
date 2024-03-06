@@ -90,6 +90,13 @@ class Fighter():
         self.vel_y += self.GRAVITY
         dy += self.vel_y 
 
+        # Avoid figther to collide into target
+        if self.rect.colliderect(target.rect):
+            if self.rect.centerx < target.rect.centerx:
+                self.rect.right = target.rect.left
+            else:
+                self.rect.left = target.rect.right
+
         # Ensure fighter stays on screen
         if self.rect.left + dx < 0:                     # Left limit
             dx = -self.rect.left
@@ -154,6 +161,14 @@ class Fighter():
         self.vel_y += self.GRAVITY
         dy += self.vel_y 
 
+
+        # Avoid figther to collide into target
+        if self.rect.colliderect(target.rect):
+            if self.rect.centerx < target.rect.centerx:
+                self.rect.right = target.rect.left
+            else:
+                self.rect.left = target.rect.right
+
         # Ensure fighter stays on screen
         if self.rect.left + dx < 0:                     # Left limit
             dx = -self.rect.left
@@ -186,7 +201,7 @@ class Fighter():
             pygame.draw.rect(debug_surf, (0, 255, 0), attacking_rect)
 
     def draw(self, surface, color):
-        pygame.draw.rect(surface, color, self.rect)
+        #pygame.draw.rect(surface, color, self.rect)
         img = pygame.transform.flip(self.image, self.flip, False)
         surface.blit(img, (self.rect.x - (self.offset[0] * self.image_scale), self.rect.y - (self.offset[1] * self.image_scale)))
 
