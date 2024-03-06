@@ -26,7 +26,7 @@ class Fighter():
         self.jumping = False
         self.attacking = False
         self.punching = False
-        self.crouching = False
+        self.blocking = False
         self.attack_cooldown = 0
         self.attack_type = 0 # 1: punch ; 2: kick
         self.controls = controls
@@ -46,10 +46,8 @@ class Fighter():
         dx = 0
         dy = 0
         self.running = False
-        self.crouching = False
+        self.blocking = False
         self.attack_type = 0
-        self.rect.height = 160
-        self.offset = [15, 0]
 
         # Get key pressed
         key = pygame.key.get_pressed()
@@ -65,10 +63,7 @@ class Fighter():
                 self.vel_y = -30
                 self.jumping = True
             if key[self.controls['crouch']]:
-                self.crouching = True
-                self.rect.height = 80
-                self.rect.y = screen_height - 30
-                self.offset = [15, 40]
+                self.blocking = True
 
             # Allow attack while doing movements    
             if key[self.controls['attack1']] or key[self.controls['attack2']]:
@@ -85,7 +80,7 @@ class Fighter():
         dx = 0
         dy = 0
         self.running = False
-        self.crouching = False
+        self.blocking = False
         self.rect.height = 160
         self.offset = [15, 0]
 
@@ -103,10 +98,7 @@ class Fighter():
                 self.vel_y = -30
                 self.jumping = True
             if action == 3:
-                self.crouching = True
-                self.rect.height = 80
-                self.rect.y = screen_height - 30
-                self.offset = [15, 40]
+                self.blocking = True
 
             # Allow attack while doing movements    
             if action == 4 or action == 5:
@@ -122,7 +114,7 @@ class Fighter():
         dx = 0
         dy = 0
         self.running = False
-        self.crouching = False
+        self.blocking = False
         self.attack_type = 0
         self.rect.height = 160
         self.offset = [15, 0]
@@ -195,8 +187,9 @@ class Fighter():
             attacking_rect = pygame.Rect(self.rect.centerx - (2 * self.rect.width * self.flip), self.rect.y + 10, self.rect.width, self.rect.height / 4)
 
             if attacking_rect.colliderect(target.rect):
-                target.health -= 10
-                target.hit = True
+                if not target.blocking:
+                    target.health -= 10
+                    target.hit = True
             pygame.draw.rect(debug_surf, (0, 255, 0), attacking_rect)
 
     def draw(self, surface, color):
@@ -219,8 +212,8 @@ class Fighter():
             self.update_action(3)
         elif self.jumping:
             self.update_action(8)
-        elif self.crouching:
-            self.update_action(9)
+        elif self.blocking:
+            self.update_action(6)
         else:
             self.update_action(1)
 
@@ -238,7 +231,10 @@ class Fighter():
             if self.alive == False:
                 self.frame_index = len(self.animation_list[self.action]) - 1
             else:
-                self.frame_index = 0
+                if self.action == 6:
+                    self.frame_index = len(self.animation_list[self.action]) - 1
+                else:
+                    self.frame_index = 0
                 # Check if an attack was executed
                 if self.action == 2:
                     self.attacking = False
