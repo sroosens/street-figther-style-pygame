@@ -46,40 +46,39 @@ class Fighter():
         dy = 0
         self.running = False
         self.crouching = False
+        self.attack_type = 0
         self.rect.height = 160
         self.offset = [15, 0]
 
         # Get key pressed
         key = pygame.key.get_pressed()
 
-        if key[self.controls['left']]:
-            dx = -self.SPEED
-            self.running = True
-        if key[self.controls['right']]:
-            dx = self.SPEED
-            self.running = True
-        if key[self.controls['jump']] and not self.jumping:
-            self.vel_y = -30
-            self.jumping = True
-        if key[self.controls['crouch']]:
-            self.crouching = True
-            self.rect.height = 80
-            self.rect.y = screen_height - 30
-            self.offset = [15, 40]
+        if not self.attacking and self.alive and not round_over:
+            if key[self.controls['left']]:
+                dx = -self.SPEED
+                self.running = True
+            if key[self.controls['right']]:
+                dx = self.SPEED
+                self.running = True
+            if key[self.controls['jump']] and not self.jumping:
+                self.vel_y = -30
+                self.jumping = True
+            if key[self.controls['crouch']]:
+                self.crouching = True
+                self.rect.height = 80
+                self.rect.y = screen_height - 30
+                self.offset = [15, 40]
 
-        # Allow attack while doing movements    
-        if key[self.controls['attack1']] or key[self.controls['attack2']]:
-            if key[self.controls['attack1']]:
-                self.attack_type = 1
-            if key[self.controls['attack2']]:
-                self.attack_type = 2
-            self.attack(debug_surf, target)
+            # Allow attack while doing movements    
+            if key[self.controls['attack1']] or key[self.controls['attack2']]:
+                self.attack(debug_surf, target)
+                if key[self.controls['attack1']]:
+                    self.attack_type = 1
+                if key[self.controls['attack2']]:
+                    self.attack_type = 2
 
         if self.attack_cooldown > 0:
             self.attack_cooldown -= 1
-        else:
-            self.punching = False
-            self.attacking = False
 
         if target.rect.centerx > self.rect.centerx:
             self.flip = False
@@ -100,34 +99,32 @@ class Fighter():
         # Get key pressed
         key = pygame.key.get_pressed()
 
-        if action == 0: #left
-            dx = -self.SPEED
-            self.running = True
-        if action == 1: # right
-            dx = self.SPEED
-            self.running = True
-        if action == 2 and not self.jumping:
-            self.vel_y = -30
-            self.jumping = True
-        if action == 3:
-            self.crouching = True
-            self.rect.height = 80
-            self.rect.y = screen_height - 30
-            self.offset = [15, 40]
+        if not self.attacking and self.alive and not round_over:
+            if action == 0: #left
+                dx = -self.SPEED
+                self.running = True
+            if action == 1: # right
+                dx = self.SPEED
+                self.running = True
+            if action == 2 and not self.jumping:
+                self.vel_y = -30
+                self.jumping = True
+            if action == 3:
+                self.crouching = True
+                self.rect.height = 80
+                self.rect.y = screen_height - 30
+                self.offset = [15, 40]
 
-        # Allow attack while doing movements    
-        if action == 4 or action == 5:
-            if action == 4:
-                self.attack_type = 1
-            if action == 5:
-                self.attack_type = 2
-            self.attack(debug_surf, target)
+            # Allow attack while doing movements    
+            if action == 4 or action == 5:
+                if action == 4:
+                    self.attack_type = 1
+                if action == 5:
+                    self.attack_type = 2
+                self.attack(debug_surf, target)
 
         if self.attack_cooldown > 0:
             self.attack_cooldown -= 1
-        else:
-            self.punching = False
-            self.attacking = False
 
         if target.rect.centerx > self.rect.centerx:
             self.flip = False
@@ -140,27 +137,32 @@ class Fighter():
         dx = 0
         dy = 0
         self.running = False
+        self.attack_type = 0
         self.rect.height = 160
         self.offset = [15, 0]
 
-        # Déterminer la direction vers laquelle l'IA doit se déplacer
-        if target.rect.centerx > self.rect.centerx:
-            dx = self.SPEED
-            self.flip = False
-        else:
-            dx = -self.SPEED
-            self.flip = True
+        if not self.attacking and self.alive and not round_over:
+            # Déterminer la direction vers laquelle l'IA doit se déplacer
+            if target.rect.centerx > self.rect.centerx:
+                dx = self.SPEED
+                self.flip = False
+            else:
+                dx = -self.SPEED
+                self.flip = True
 
-        # Sauter si trop proche du joueur
-        #if abs(target.rect.centerx - self.rect.centerx) < 100 and not self.jumping:
-        #    self.vel_y = -30
-        #    self.jumping = True
+            # Sauter si trop proche du joueur
+            #if abs(target.rect.centerx - self.rect.centerx) < 100 and not self.jumping:
+            #    self.vel_y = -30
+            #    self.jumping = True
 
-        # Attaquer si assez proche du joueur
-        if abs(target.rect.centerx - self.rect.centerx) < 80:
-            self.attack_type = 1
-            self.attack(debug_surf, target)
+            # Attaquer si assez proche du joueur
+            if abs(target.rect.centerx - self.rect.centerx) < 80:
+                self.attack_type = 1
+                self.attack(debug_surf, target)
 
+        if self.attack_cooldown > 0:
+            self.attack_cooldown -= 1
+            
         self.update_movement(dx, dy, screen_width, screen_height, target)
 
     def update_movement(self, dx, dy, screen_width, screen_height, target):
@@ -190,17 +192,11 @@ class Fighter():
         self.rect.y += dy
 
     def attack(self, debug_surf, target):
-        if self.attack_cooldown == 0 and not self.attacking:
+        if self.attack_cooldown == 0: # and not self.attacking and not self.hit:
+            print("punch")
             self.attacking = True
-            if self.attack_type == 1:
-                print("punch")
-                self.attack_cooldown = 15
-                self.punching = True
-                attacking_rect = pygame.Rect(self.rect.centerx - (2 * self.rect.width * self.flip), self.rect.y + 10, self.rect.width, self.rect.height / 4)
-            else:
-                print("no attack")
-                attacking_rect = pygame.Rect(self.rect.centerx - (2 * self.rect.width * self.flip), self.rect.y, self.rect.width * 2, self.rect.height)
-        
+            attacking_rect = pygame.Rect(self.rect.centerx - (2 * self.rect.width * self.flip), self.rect.y + 10, self.rect.width, self.rect.height / 4)
+
             if attacking_rect.colliderect(target.rect):
                 target.health -= 10
                 target.hit = True
@@ -214,30 +210,51 @@ class Fighter():
     def update(self):
 
         # Update actions
-        if self.running:
+        # Check if still alive
+        if self.health <= 0:
+            self.health = 0
+            self.alive = False
+        elif self.hit:
+            self.update_action(7)
+        elif self.attacking:
+            self.update_action(2)
+        elif self.running:
             self.update_action(3)
         elif self.jumping:
             self.update_action(8)
-        elif self.punching:
-            self.update_action(2)
+        
         elif self.crouching:
             self.update_action(9)
         else:
             self.update_action(1)
 
-        # Update animation frames
-        animation_cooldown = 100
+        animation_cooldown = 50
+
+        # Update image
         self.image = self.animation_list[self.action][self.frame_index]
+        # Check if enough time has passed since the last update
         if pygame.time.get_ticks() - self.update_time > animation_cooldown:
             self.frame_index += 1
             self.update_time = pygame.time.get_ticks()
+            # Check if the animation has finished
         if self.frame_index >= len(self.animation_list[self.action]):
-            self.frame_index = 0
+            # If the player is dead then end the animation
+            if self.alive == False:
+                self.frame_index = len(self.animation_list[self.action]) - 1
+            else:
+                self.frame_index = 0
+                # Check if an attack was executed
+                if self.action == 2:
+                    self.attacking = False
+                    self.attack_cooldown = 20
+                # Check if damage was taken
+                if self.action == 7:
+                    self.hit = False
+                    # If the player was in the middle of an attack, then the attack is stopped
+                    self.attacking = False
+                    self.attack_cooldown = 20
 
-        # Check if still alive
-        if self.health <= 0:
-            self.health = 0
-            self.alive = False
+        
     # Update current action with requested one
     def update_action(self, new_action):
         if new_action != self.action:

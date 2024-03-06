@@ -51,7 +51,7 @@ bg_image = pygame.image.load("assets/images/background/japan_1.png").convert_alp
 chara_sheet = pygame.image.load("assets/sprites/ken.png").convert_alpha()
 
 # Define number of steps in each animation
-CHARA_ANIMATION_STEPS = [5, 3, 3, 5, 1, 1, 1, 1, 7, 1]
+CHARA_ANIMATION_STEPS = [5, 3, 3, 5, 1, 1, 1, 5, 7, 1]
 
 # Function for drawing background
 def draw_bg():
