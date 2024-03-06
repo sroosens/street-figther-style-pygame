@@ -76,14 +76,6 @@ class Fighter():
                     self.attack_type = 1
                 if key[self.controls['attack2']]:
                     self.attack_type = 2
-
-        if self.attack_cooldown > 0:
-            self.attack_cooldown -= 1
-
-        if target.rect.centerx > self.rect.centerx:
-            self.flip = False
-        else:
-            self.flip = True
         
         self.update_movement(dx, dy, screen_width, screen_height, target)
 
@@ -122,14 +114,6 @@ class Fighter():
                 if action == 5:
                     self.attack_type = 2
                 self.attack(debug_surf, target)
-
-        if self.attack_cooldown > 0:
-            self.attack_cooldown -= 1
-
-        if target.rect.centerx > self.rect.centerx:
-            self.flip = False
-        else:
-            self.flip = True
         
         self.update_movement(dx, dy, screen_width, screen_height, target)
 
@@ -145,10 +129,8 @@ class Fighter():
             # Déterminer la direction vers laquelle l'IA doit se déplacer
             if target.rect.centerx > self.rect.centerx:
                 dx = self.SPEED
-                self.flip = False
             else:
                 dx = -self.SPEED
-                self.flip = True
 
             # Sauter si trop proche du joueur
             #if abs(target.rect.centerx - self.rect.centerx) < 100 and not self.jumping:
@@ -160,12 +142,18 @@ class Fighter():
                 self.attack_type = 1
                 self.attack(debug_surf, target)
 
-        if self.attack_cooldown > 0:
-            self.attack_cooldown -= 1
-            
         self.update_movement(dx, dy, screen_width, screen_height, target)
 
     def update_movement(self, dx, dy, screen_width, screen_height, target):
+
+        if target.rect.centerx > self.rect.centerx:
+            self.flip = False
+        else:
+            self.flip = True
+    
+        if self.attack_cooldown > 0:
+            self.attack_cooldown -= 1
+
         # Apply gravity
         self.vel_y += self.GRAVITY
         dy += self.vel_y 
