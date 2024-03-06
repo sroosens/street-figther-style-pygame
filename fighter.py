@@ -1,4 +1,5 @@
 import pygame
+import random
 
 class Fighter():
     # Defines
@@ -121,6 +122,7 @@ class Fighter():
         dx = 0
         dy = 0
         self.running = False
+        self.crouching = False
         self.attack_type = 0
         self.rect.height = 160
         self.offset = [15, 0]
@@ -128,9 +130,9 @@ class Fighter():
         if not self.attacking and self.alive and not round_over:
             # Déterminer la direction vers laquelle l'IA doit se déplacer
             if target.rect.centerx > self.rect.centerx:
-                dx = self.SPEED
+                dx = 3
             else:
-                dx = -self.SPEED
+                dx = -3
 
             # Sauter si trop proche du joueur
             #if abs(target.rect.centerx - self.rect.centerx) < 100 and not self.jumping:
@@ -139,8 +141,15 @@ class Fighter():
 
             # Attaquer si assez proche du joueur
             if abs(target.rect.centerx - self.rect.centerx) < 80:
-                self.attack_type = 1
-                self.attack(debug_surf, target)
+#                if random.random() < 0.5:
+#                    self.crouching = True
+#                    self.rect.height = 80
+#                    self.rect.y = screen_height - 30
+#                    self.offset = [15, 40]
+#                else:
+                    self.attack_type = 1
+                    self.attack(debug_surf, target)
+
 
         self.update_movement(dx, dy, screen_width, screen_height, target)
 
@@ -210,7 +219,6 @@ class Fighter():
             self.update_action(3)
         elif self.jumping:
             self.update_action(8)
-        
         elif self.crouching:
             self.update_action(9)
         else:
