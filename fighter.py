@@ -132,10 +132,10 @@ class Fighter():
             self.offset = [15, 40]
 
         # Allow attack while doing movements    
-        if action == 3 or action == 4:
-            if action == 3:
-                self.attack_type = 1
+        if action == 4 or action == 5:
             if action == 4:
+                self.attack_type = 1
+            if action == 5:
                 self.attack_type = 2
             self.attack(debug_surf, target)
 
@@ -176,10 +176,6 @@ class Fighter():
                 self.attack_cooldown = 15
                 self.punching = True
                 attacking_rect = pygame.Rect(self.rect.centerx - (2 * self.rect.width * self.flip), self.rect.y + 10, self.rect.width, self.rect.height / 4)
-            elif self.attack_type == 2:
-                print("kick")
-                self.attack_cooldown = 15
-                attacking_rect = pygame.Rect(self.rect.centerx - (2 * self.rect.width * self.flip), self.rect.centery, self.rect.width * 2, self.rect.height / 2)
             else:
                 print("no attack")
                 attacking_rect = pygame.Rect(self.rect.centerx - (2 * self.rect.width * self.flip), self.rect.y, self.rect.width * 2, self.rect.height)

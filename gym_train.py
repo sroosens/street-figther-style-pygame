@@ -27,15 +27,16 @@ while run:
     action = env.action_space.sample()  # Random action selection
     obs, reward, done, _ = env.step(action)
     env.render()
-    print('Reward:', reward)
-    print('Done:', done)
+    #print('Reward:', reward)
+    #print('Done:', done)
+    print('Observations:', obs)
 
     # Event handlera
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
 
-    #pygame.time.wait(10)
+    #pygame.time.wait(10)aa
     
 # Exit game
 pygame.quit()

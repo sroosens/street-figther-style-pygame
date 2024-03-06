@@ -1,5 +1,6 @@
 import gym
 from gym import spaces
+from gym.spaces import Box, Dict
 import numpy as np
 import pygame
 from fighter import Fighter
@@ -63,8 +64,17 @@ class SFGameEnv(gym.Env):
 
         # Setup available actions
         self.action_space = spaces.Discrete(5)
+
+        spaces_obs = {
+            'score_p1': Box(low=0, high=10, shape=(9,), dtype=np.int32),
+            'score_p2': Box(low=0, high=10, shape=(9,), dtype=np.int32),
+            'pos_x_p1': Box(low=0, high=1000, shape=(999,), dtype=np.int32),
+            'pos_x_p2': Box(low=0, high=1000, shape=(999,), dtype=np.int32),
+            'health_p1': Box(low=0, high=100, shape=(99,), dtype=np.int32),
+            'health_p2': Box(low=0, high=100, shape=(99,), dtype=np.int32),
+            }
         # Setup observations infos
-        self.observation_space = spaces.Discrete(2)
+        self.observation_space = Dict(spaces_obs)
     
     # Function for drawing background
     def draw_bg(self):
@@ -72,10 +82,15 @@ class SFGameEnv(gym.Env):
         self.screen.blit(scaled_bg, (0,0))
 
     # Function for drawing fighter health bar
-    def draw_health_bar(self, health, x, y):
+    def draw_health_bar(self, health, x, y, flip):
         ratio = health / 100
-        pygame.draw.rect(self.screen, WHITE, (x - 2, y - 2, 204, 34))
-        pygame.draw.rect(self.screen, BLUE, (x, y, 200 * ratio, 30))
+        bar_width = 340 * ratio
+        if flip:
+            pygame.draw.rect(self.screen, WHITE, (x, y - 2, 344, 34))
+            pygame.draw.rect(self.screen, BLUE, (x + 342 - bar_width, y, bar_width, 30))
+        else:
+            pygame.draw.rect(self.screen, WHITE, (x - 2, y - 2, 344, 34))
+            pygame.draw.rect(self.screen, BLUE, (x, y, bar_width, 30))
 
     # Function for drawing texts
     def draw_text(self, text, font, text_col, x, y):
@@ -89,16 +104,27 @@ class SFGameEnv(gym.Env):
         self.fighter_1.move(SCREEN_WIDTH, SCREEN_HEIGHT, self.screen, self.fighter_2, self.round_over)
         self.fighter_2.move_agent(SCREEN_WIDTH, SCREEN_HEIGHT, self.screen, self.fighter_1, self.round_over, action)
         reward = 1.0
-        return 0, reward, True, {}
+
+        # Update observations
+        observations = {
+            'score_p1': self.score[0],
+            'score_p2': self.score[1],
+            'pos_x_p1' : self.fighter_1.rect.centerx,
+            'pos_x_p2' : self.fighter_2.rect.centerx,
+            'health_p1': self.fighter_1.health,
+            'health_p2': self.fighter_2.health
+            }
+        
+        return observations, reward, True, {}
 
     def render(self):
-        print("render")
         # Draw background and HUD
         self.draw_bg()
-        self.draw_health_bar(self.fighter_1.health, 20, 20)
-        self.draw_health_bar(self.fighter_2.health, 544, 20)
-        self.draw_text("P1: " + str(self.score[0]), self.font, WHITE, 20, 60)
-        self.draw_text("P2: " + str(self.score[1]), self.font, WHITE, 580, 60)
+        self.draw_health_bar(self.fighter_1.health, 20, 20, True)
+        self.draw_health_bar(self.fighter_2.health, 406, 20, False)
+        self.draw_text("P1: " + str(self.score[0]), self.font, WHITE, 50, 60)
+        self.draw_text("P2: " + str(self.score[1]), self.font, WHITE, 620, 60)
+        self.draw_text("KO", self.font, RED, 366, 20)
         # Update fighters logic
         self.fighter_1.update()
         self.fighter_2.update()
