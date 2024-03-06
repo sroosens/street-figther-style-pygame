@@ -102,8 +102,9 @@ class SFGameEnv(gym.Env):
         self.fighter_2 = Fighter(controls_p2, True, 600, 280, self.chara_sheet, CHARA_ANIMATION_STEPS)
 
     def step(self, action):
-        self.fighter_1.move(SCREEN_WIDTH, SCREEN_HEIGHT, self.screen, self.fighter_2, self.round_over)
-        self.fighter_2.move_agent(SCREEN_WIDTH, SCREEN_HEIGHT, self.screen, self.fighter_1, self.round_over, action)
+        self.fighter_1.move_player(SCREEN_WIDTH, SCREEN_HEIGHT, self.screen, self.fighter_2, self.round_over)
+        self.fighter_2.move_basic_ai(SCREEN_WIDTH, SCREEN_HEIGHT, self.screen, self.fighter_1, self.round_over)
+        #self.fighter_2.move_agent(SCREEN_WIDTH, SCREEN_HEIGHT, self.screen, self.fighter_1, self.round_over, action)
 
         reward = self.compute_reward()
         obs = self.compute_obs()

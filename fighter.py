@@ -40,7 +40,7 @@ class Fighter():
             animation_list.append(temp_img_list)
         return animation_list
 
-    def move(self, screen_width, screen_height, debug_surf, target, round_over):
+    def move_player(self, screen_width, screen_height, debug_surf, target, round_over):
         # Reset variables
         dx = 0
         dy = 0
@@ -85,31 +85,8 @@ class Fighter():
             self.flip = False
         else:
             self.flip = True
-
-        # Apply gravity
-        self.vel_y += self.GRAVITY
-        dy += self.vel_y 
-
-        # Avoid figther to collide into target
-        if self.rect.colliderect(target.rect):
-            if self.rect.centerx < target.rect.centerx:
-                self.rect.right = target.rect.left
-            else:
-                self.rect.left = target.rect.right
-
-        # Ensure fighter stays on screen
-        if self.rect.left + dx < 0:                     # Left limit
-            dx = -self.rect.left
-        if self.rect.right + dx > screen_width:         # Right limit
-            dx = screen_width - self.rect.right
-        if self.rect.bottom + dy > screen_height - 30:  # Bottom limit
-            self.vel_y = 0
-            self.jumping = False
-            dy = screen_height - 30 - self.rect.bottom
         
-        # Update fighter position
-        self.rect.x += dx
-        self.rect.y += dy
+        self.update_movement(dx, dy, screen_width, screen_height, target)
 
     def move_agent(self, screen_width, screen_height, debug_surf, target, round_over, action):
         # Reset variables
@@ -156,11 +133,40 @@ class Fighter():
             self.flip = False
         else:
             self.flip = True
+        
+        self.update_movement(dx, dy, screen_width, screen_height, target)
 
+    def move_basic_ai(self, screen_width, screen_height, debug_surf, target, round_over):
+        dx = 0
+        dy = 0
+        self.running = False
+        self.rect.height = 160
+        self.offset = [15, 0]
+
+        # Déterminer la direction vers laquelle l'IA doit se déplacer
+        if target.rect.centerx > self.rect.centerx:
+            dx = self.SPEED
+            self.flip = False
+        else:
+            dx = -self.SPEED
+            self.flip = True
+
+        # Sauter si trop proche du joueur
+        #if abs(target.rect.centerx - self.rect.centerx) < 100 and not self.jumping:
+        #    self.vel_y = -30
+        #    self.jumping = True
+
+        # Attaquer si assez proche du joueur
+        if abs(target.rect.centerx - self.rect.centerx) < 80:
+            self.attack_type = 1
+            self.attack(debug_surf, target)
+
+        self.update_movement(dx, dy, screen_width, screen_height, target)
+
+    def update_movement(self, dx, dy, screen_width, screen_height, target):
         # Apply gravity
         self.vel_y += self.GRAVITY
         dy += self.vel_y 
-
 
         # Avoid figther to collide into target
         if self.rect.colliderect(target.rect):
@@ -170,16 +176,16 @@ class Fighter():
                 self.rect.left = target.rect.right
 
         # Ensure fighter stays on screen
-        if self.rect.left + dx < 0:                     # Left limit
+        if self.rect.left + dx < 0:
             dx = -self.rect.left
-        if self.rect.right + dx > screen_width:         # Right limit
+        if self.rect.right + dx > screen_width:
             dx = screen_width - self.rect.right
-        if self.rect.bottom + dy > screen_height - 30:  # Bottom limit
+        if self.rect.bottom + dy > screen_height - 30:
             self.vel_y = 0
             self.jumping = False
             dy = screen_height - 30 - self.rect.bottom
-        
-        # Update fighter position
+
+        # Update figther's position
         self.rect.x += dx
         self.rect.y += dy
 
@@ -201,7 +207,7 @@ class Fighter():
             pygame.draw.rect(debug_surf, (0, 255, 0), attacking_rect)
 
     def draw(self, surface, color):
-        #pygame.draw.rect(surface, color, self.rect)
+        pygame.draw.rect(surface, color, self.rect)
         img = pygame.transform.flip(self.image, self.flip, False)
         surface.blit(img, (self.rect.x - (self.offset[0] * self.image_scale), self.rect.y - (self.offset[1] * self.image_scale)))
 
@@ -232,7 +238,6 @@ class Fighter():
         if self.health <= 0:
             self.health = 0
             self.alive = False
-
     # Update current action with requested one
     def update_action(self, new_action):
         if new_action != self.action:
