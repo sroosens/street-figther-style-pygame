@@ -86,9 +86,9 @@ while run:
     draw_text("P1: " + str(score[0]), FONT, WHITE, 20, 60)
     draw_text("P2: " + str(score[1]), FONT, WHITE, 580, 60)
 
-    # Move fighters
+    # Move fighterse
     fighter_1.move_player(SCREEN_WIDTH, SCREEN_HEIGHT, screen, fighter_2, round_over)
-    fighter_2.move_basic_ai(SCREEN_WIDTH, SCREEN_HEIGHT, screen, fighter_1, round_over)
+    fighter_2.move_player(SCREEN_WIDTH, SCREEN_HEIGHT, screen, fighter_1, round_over)
 
     # Update fighters logic
     fighter_1.update()

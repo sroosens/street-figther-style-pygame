@@ -53,18 +53,18 @@ class Fighter():
         key = pygame.key.get_pressed()
 
         if not self.attacking and self.alive and not round_over:
-            if key[self.controls['left']]:
-                dx = -self.SPEED
-                self.running = True
-            if key[self.controls['right']]:
-                dx = self.SPEED
-                self.running = True
-            if key[self.controls['jump']] and not self.jumping:
-                self.vel_y = -30
-                self.jumping = True
             if key[self.controls['crouch']]:
                 self.blocking = True
-
+            elif key[self.controls['left']]:
+                dx = -self.SPEED
+                self.running = True
+            elif key[self.controls['right']]:
+                dx = self.SPEED
+                self.running = True
+            elif key[self.controls['jump']] and not self.jumping:
+                self.vel_y = -30
+                self.jumping = True
+            
             # Allow attack while doing movements    
             if key[self.controls['attack1']] or key[self.controls['attack2']]:
                 self.attack(debug_surf, target)
@@ -143,7 +143,6 @@ class Fighter():
         self.update_movement(dx, dy, screen_width, screen_height, target)
 
     def update_movement(self, dx, dy, screen_width, screen_height, target):
-
         if target.rect.centerx > self.rect.centerx:
             self.flip = False
         else:
@@ -181,7 +180,7 @@ class Fighter():
         if self.attack_cooldown == 0: # and not self.attacking and not self.hit:
             print("punch")
             self.attacking = True
-            attacking_rect = pygame.Rect(self.rect.centerx - (2 * self.rect.width * self.flip), self.rect.y + 10, self.rect.width, self.rect.height / 4)
+            attacking_rect = pygame.Rect(self.rect.centerx - (self.rect.width * self.flip), self.rect.y + 10, self.rect.width, self.rect.height / 4)
 
             if attacking_rect.colliderect(target.rect):
                 if not target.blocking:
