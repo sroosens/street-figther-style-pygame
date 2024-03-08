@@ -88,7 +88,7 @@ while run:
 
     # Move fighterse
     fighter_1.move_player(SCREEN_WIDTH, SCREEN_HEIGHT, screen, fighter_2, round_over)
-    fighter_2.move_player(SCREEN_WIDTH, SCREEN_HEIGHT, screen, fighter_1, round_over)
+    fighter_2.move_basic_ai(SCREEN_WIDTH, SCREEN_HEIGHT, screen, fighter_1, round_over)
 
     # Update fighters logic
     fighter_1.update()

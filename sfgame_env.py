@@ -61,8 +61,6 @@ class SFGameEnv(gym.Env):
         self.action_space = spaces.Discrete(5)
 
         spaces_obs = {
-            'score_p1': Box(low=0, high=10, shape=(9,), dtype=np.int32),
-            'score_p2': Box(low=0, high=10, shape=(9,), dtype=np.int32),
             'pos_x_p1': Box(low=0, high=1000, shape=(999,), dtype=np.int32),
             'pos_x_p2': Box(low=0, high=1000, shape=(999,), dtype=np.int32),
             'health_p1': Box(low=0, high=100, shape=(99,), dtype=np.int32),
@@ -102,12 +100,13 @@ class SFGameEnv(gym.Env):
         self.fighter_2 = Fighter(controls_p2, True, 600, 280, self.chara_sheet, CHARA_ANIMATION_STEPS)
 
     def step(self, action):
-        self.fighter_1.move_player(SCREEN_WIDTH, SCREEN_HEIGHT, self.screen, self.fighter_2, self.round_over)
-        self.fighter_2.move_basic_ai(SCREEN_WIDTH, SCREEN_HEIGHT, self.screen, self.fighter_1, self.round_over)
-        #self.fighter_2.move_agent(SCREEN_WIDTH, SCREEN_HEIGHT, self.screen, self.fighter_1, self.round_over, action)
+        self.fighter_1.move_basic_ai(SCREEN_WIDTH, SCREEN_HEIGHT, self.screen, self.fighter_2, self.round_over)
+        #self.fighter_2.move_basic_ai(SCREEN_WIDTH, SCREEN_HEIGHT, self.screen, self.fighter_1, self.round_over)
+        self.fighter_2.move_agent(SCREEN_WIDTH, SCREEN_HEIGHT, self.screen, self.fighter_1, self.round_over, action)
 
         reward = self.compute_reward()
-        obs = self.compute_obs()
+        info = self.get_info()
+        obs = self._get_obs()
 
         # Manage rounds
         if self.round_over == False:
@@ -117,24 +116,38 @@ class SFGameEnv(gym.Env):
             if self.fighter_2.alive == False: # Increment P1 score and end the round
                 self.score[0] += 1
                 self.round_over = True
-        
-        return obs, reward, self.round_over, {}
+
+        if self.render_mode == "human":
+            self.render()
+
+        return info, reward, self.round_over, info
     
     def compute_reward(self):
         reward = 0
+        if self.round_over:
+            if self.fighter_2.alive:
+                reward +=50
+            else:
+                reward -=50
+        elif self.fighter_2.health < self.fighter_1.health:
+            reward -= 10
+        elif self.fighter_2.health > self.fighter_1.health:
+            reward +=10
         return reward
     
-    def compute_obs(self):
+    def get_info(self):
         # Update observations
-        obs = {
-            'score_p1': self.score[0],
-            'score_p2': self.score[1],
+        info = {
             'pos_x_p1' : self.fighter_1.rect.centerx,
             'pos_x_p2' : self.fighter_2.rect.centerx,
             'health_p1': self.fighter_1.health,
             'health_p2': self.fighter_2.health
             }
-        return obs
+        return info
+    
+    def _get_obs(self):
+        self.state = (self.fighter_1.rect.centerx, self.fighter_1.rect.centery)
+        return np.array(self.state, dtype=np.float32)
 
 
     def render(self):

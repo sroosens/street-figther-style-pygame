@@ -128,14 +128,15 @@ class Fighter():
                 dx = -3
 
             # Sauter si trop proche du joueur
-            #if abs(target.rect.centerx - self.rect.centerx) < 100 and not self.jumping:
-            #    self.vel_y = -30
-            #    self.jumping = True
+            if abs(target.rect.centerx - self.rect.centerx) > 100 and not self.jumping:
+                self.vel_y = -30
+                self.jumping = True
 
             # If close enough
             if abs(target.rect.centerx - self.rect.centerx) < 80:
-                if target.attacking: # If opponent is attacking, block
-                    self.blocking = True # Not working
+                ran = random.random()
+                if target.attack_cooldown > 0: # If opponent is attacking, block
+                    self.blocking = True
                 else: # Otherwise attack
                     self.attack_type = 1
                     self.attack(debug_surf, target)

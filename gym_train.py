@@ -1,6 +1,8 @@
 import gym
 from sfgame_env import SFGameEnv
 import pygame
+import numpy as np
+import random
 
 # Register the environment
 gym.register(
@@ -23,12 +25,29 @@ FPS = 60
 done = False
 stop = False
 
+#
+# Q Table implementation
+#
+q_table = np.zeros([len(env.observation_space.spaces), env.action_space.n])
+
+# Hyperparameters
+alpha = 0.1
+gamma = 0.6
+epsilon = 0.1
+
+# For plotting metrics
+all_epochs = []
+all_penalties = []
+
 print("Beging training.\n")
 
 # Run the session X times
 for i in range(1, 10):
     print(f"Episode: {i}")
-    obs_t = env.reset()
+    state = env.reset()
+
+    epochs, penalties, reward, = 0, 0, 0
+
     done = False
     
     if stop:
@@ -37,13 +56,29 @@ for i in range(1, 10):
     # Train
     while not done:
         clock.tick(FPS)
-        action = env.action_space.sample()  # Random action selection
-        obs, reward, done, _ = env.step(action)
-        env.render()
 
-        #print('Reward:', reward)
-        #print('Done:', done)
-        print('Observations:', obs)
+        # action = env.action_space.sample()
+
+        if random.uniform(0, 1) < epsilon:
+            action = env.action_space.sample() # Explore action space
+        else:
+            action = np.argmax(q_table[state]) # Exploit learned values
+
+        next_state, reward, done, info = env.step(action)
+
+        old_value = q_table[state, action]
+        next_max = np.max(q_table[next_state])
+        
+        new_value = (1 - alpha) * old_value + alpha * (reward + gamma * next_max)
+        q_table[state, action] = new_value
+
+        if reward < 0:
+            penalties += 1
+
+        state = next_state
+        epochs += 1
+        
+        print(f"Observations: {info}, Reward: {reward}")
 
         # Event handlera
         for event in pygame.event.get():
@@ -52,7 +87,9 @@ for i in range(1, 10):
                 done = True
 
         #pygame.time.wait(10)
-            
+
 print("Training finished.\n")
+print("Penalties incurred: {}".format(penalties))
+
 # Exit game
 pygame.quit()
