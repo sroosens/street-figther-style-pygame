@@ -31,6 +31,10 @@ class Fighter():
         self.attack_type = 0 # 1: punch ; 2: kick
         self.controls = controls
 
+    @property
+    def binx(self):
+        return int(self.rect.centerx/64)
+
     def fetch_sprites(self, sprite_sheet, animation_steps):
         animation_list = []
         for y, animation in enumerate(animation_steps):
@@ -179,7 +183,6 @@ class Fighter():
 
     def attack(self, debug_surf, target):
         if self.attack_cooldown == 0: # and not self.attacking and not self.hit:
-            print("punch")
             self.attacking = True
             attacking_rect = pygame.Rect(self.rect.centerx - (self.rect.width * self.flip), self.rect.y + 10, self.rect.width, self.rect.height / 4)
 

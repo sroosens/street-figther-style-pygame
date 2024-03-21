@@ -6,8 +6,8 @@ import pygame
 from fighter import Fighter
 
 # Defines
-SCREEN_WIDTH = 768
-SCREEN_HEIGHT = 494
+SCREEN_WIDTH = 640
+SCREEN_HEIGHT = 480
 RED = (255, 0, 0)
 BLUE = (0, 0, 255)
 WHITE = (255, 255, 255)
@@ -55,19 +55,12 @@ class SFGameEnv(gym.Env):
         #self.clock = pygame.time.Clock()
         #self.FPS = 60
 
-        self.reset()
+        self.score = [0, 0]
 
         # Setup available actions
         self.action_space = spaces.Discrete(5)
-
-        spaces_obs = {
-            'pos_x_p1': Box(low=0, high=1000, shape=(999,), dtype=np.int32),
-            'pos_x_p2': Box(low=0, high=1000, shape=(999,), dtype=np.int32),
-            'health_p1': Box(low=0, high=100, shape=(99,), dtype=np.int32),
-            'health_p2': Box(low=0, high=100, shape=(99,), dtype=np.int32),
-            }
-        # Setup observations infos
-        self.observation_space = Dict(spaces_obs)
+        # Setup available observations
+        self.observation_space = spaces.MultiDiscrete([100+1, 100+1, 10+1, 10+1], dtype=int) #health p1, health p2, p1.x, p2.x, 
     
     # Function for drawing background
     def draw_bg(self):
@@ -77,13 +70,13 @@ class SFGameEnv(gym.Env):
     # Function for drawing fighter health bar
     def draw_health_bar(self, health, x, y, flip):
         ratio = health / 100
-        bar_width = 340 * ratio
+        bar_width = 200 * ratio
         if flip:
-            pygame.draw.rect(self.screen, WHITE, (x, y - 2, 344, 34))
-            pygame.draw.rect(self.screen, ORANGE, (x + 342 - bar_width, y, bar_width, 30))
+            pygame.draw.rect(self.screen, WHITE, (x, y - 2, 204, 34))
+            pygame.draw.rect(self.screen, BLUE, (x + 202 - bar_width, y, bar_width, 30))
         else:
-            pygame.draw.rect(self.screen, WHITE, (x - 2, y - 2, 344, 34))
-            pygame.draw.rect(self.screen, ORANGE, (x, y, bar_width, 30))
+            pygame.draw.rect(self.screen, WHITE, (x - 2, y - 2, 204, 34))
+            pygame.draw.rect(self.screen, BLUE, (x, y, bar_width, 30))
 
     # Function for drawing texts
     def draw_text(self, text, font, text_col, x, y):
@@ -93,11 +86,13 @@ class SFGameEnv(gym.Env):
     def reset(self):
         print("reset")
         # Game variables
-        self.score = [0, 0]
         self.round_over = False
         # Create instances of fighter
         self.fighter_1 = Fighter(controls_p1, False, 100, 280, self.chara_sheet, CHARA_ANIMATION_STEPS)
         self.fighter_2 = Fighter(controls_p2, True, 600, 280, self.chara_sheet, CHARA_ANIMATION_STEPS)
+
+        return self._get_obs(), self._get_info()
+        
 
     def step(self, action):
         self.fighter_1.move_basic_ai(SCREEN_WIDTH, SCREEN_HEIGHT, self.screen, self.fighter_2, self.round_over)
@@ -105,7 +100,7 @@ class SFGameEnv(gym.Env):
         self.fighter_2.move_agent(SCREEN_WIDTH, SCREEN_HEIGHT, self.screen, self.fighter_1, self.round_over, action)
 
         reward = self.compute_reward()
-        info = self.get_info()
+        info = self._get_info()
         obs = self._get_obs()
 
         # Manage rounds
@@ -117,37 +112,34 @@ class SFGameEnv(gym.Env):
                 self.score[0] += 1
                 self.round_over = True
 
-        if self.render_mode == "human":
-            self.render()
+        #if self.render_mode == "human":
+        self.render()
 
-        return info, reward, self.round_over, info
+        return obs, reward, self.round_over, info
     
     def compute_reward(self):
         reward = 0
+        reward -= 10
         if self.round_over:
             if self.fighter_2.alive:
-                reward +=50
+                reward +=500
             else:
-                reward -=50
+                reward -=500
         elif self.fighter_2.health < self.fighter_1.health:
             reward -= 10
         elif self.fighter_2.health > self.fighter_1.health:
             reward +=10
+
+        distance = abs(self.fighter_1.binx - self.fighter_2.binx)
+        reward += (1 / (distance+1)) * 10
+
         return reward
     
-    def get_info(self):
-        # Update observations
-        info = {
-            'pos_x_p1' : self.fighter_1.rect.centerx,
-            'pos_x_p2' : self.fighter_2.rect.centerx,
-            'health_p1': self.fighter_1.health,
-            'health_p2': self.fighter_2.health
-            }
-        return info
+    def _get_info(self):
+        return {}
     
     def _get_obs(self):
-        self.state = (self.fighter_1.rect.centerx, self.fighter_1.rect.centery)
-        return np.array(self.state, dtype=np.float32)
+        return np.array([self.fighter_1.health, self.fighter_2.health, self.fighter_1.binx, self.fighter_2.binx])
 
 
     def render(self):
@@ -156,8 +148,8 @@ class SFGameEnv(gym.Env):
         self.draw_health_bar(self.fighter_1.health, 20, 20, True)
         self.draw_health_bar(self.fighter_2.health, 406, 20, False)
         self.draw_text("P1: " + str(self.score[0]), self.font, WHITE, 50, 60)
-        self.draw_text("P2: " + str(self.score[1]), self.font, WHITE, 620, 60)
-        self.draw_text("KO", self.font, RED, 366, 20)
+        self.draw_text("P2: " + str(self.score[1]), self.font, WHITE, 400, 60)
+        self.draw_text("KO", self.font, RED, 300, 20)
         # Update fighters logic
         self.fighter_1.update()
         self.fighter_2.update()
@@ -169,3 +161,4 @@ class SFGameEnv(gym.Env):
 
     def close(self):
         print("close")
+        pygame.quit()
