@@ -134,6 +134,10 @@ class SFGameEnv(gym.Env):
         distance = abs(self.fighter_1.binx - self.fighter_2.binx)
         reward += (1 / (distance+1)) * 50
 
+        if (self.fighter_1.binx < 1) or (SCREEN_WIDTH / 64) - self.fighter_1.binx < 1:
+            print("close to wall")
+            reward -= 20
+
         return reward
     
     def _get_info(self):
