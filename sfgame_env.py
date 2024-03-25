@@ -118,8 +118,7 @@ class SFGameEnv(gym.Env):
         return obs, reward, self.round_over, info
     
     def compute_reward(self):
-        reward = 0
-        reward -= 10
+        reward = -10
         if self.round_over:
             if self.fighter_2.alive:
                 reward +=500
@@ -131,7 +130,7 @@ class SFGameEnv(gym.Env):
             reward +=10
 
         distance = abs(self.fighter_1.binx - self.fighter_2.binx)
-        reward += (1 / (distance+1)) * 10
+        reward += (1 / (distance+1)) * 200
 
         return reward
     
