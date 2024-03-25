@@ -193,7 +193,7 @@ class Fighter():
             pygame.draw.rect(debug_surf, (0, 255, 0), attacking_rect)
 
     def draw(self, surface, color):
-        pygame.draw.rect(surface, color, self.rect)
+        #pygame.draw.rect(surface, color, self.rect)
         img = pygame.transform.flip(self.image, self.flip, False)
         surface.blit(img, (self.rect.x - (self.offset[0] * self.image_scale), self.rect.y - (self.offset[1] * self.image_scale)))
 

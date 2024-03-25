@@ -12,6 +12,7 @@ RED = (255, 0, 0)
 BLUE = (0, 0, 255)
 WHITE = (255, 255, 255)
 ORANGE = (255, 127, 39)
+PURPLE = (196, 0, 249)
 FONT = 0
 CHARA_ANIMATION_STEPS = [5, 3, 3, 5, 1, 1, 1, 1, 7, 1]
 
@@ -48,7 +49,8 @@ class SFGameEnv(gym.Env):
         # Configure background
         self.bg_image = pygame.image.load("assets/images/background/japan_1.png").convert_alpha()
         # Load sprite sheets
-        self.chara_sheet = pygame.image.load("assets/sprites/ken.png").convert_alpha()
+        self.chara_sheet_p1 = pygame.image.load("assets/sprites/ken.png").convert_alpha()
+        self.chara_sheet_p2 = pygame.image.load("assets/sprites/ken_2.png").convert_alpha()
         self.font = pygame.font.Font("assets/fonts/VCR_OSD_MONO_1.001.ttf", 30)
 
         # Set frame rate
@@ -60,7 +62,7 @@ class SFGameEnv(gym.Env):
         # Setup available actions
         self.action_space = spaces.Discrete(5)
         # Setup available observations
-        self.observation_space = spaces.MultiDiscrete([100+1, 100+1, 10+1, 10+1], dtype=int) #health p1, health p2, p1.x, p2.x, 
+        self.observation_space = spaces.MultiDiscrete([10+1, 10+1, 10+1, 10+1], dtype=int) #health p1, health p2, p1.x, p2.x, 
     
     # Function for drawing background
     def draw_bg(self):
@@ -73,10 +75,10 @@ class SFGameEnv(gym.Env):
         bar_width = 200 * ratio
         if flip:
             pygame.draw.rect(self.screen, WHITE, (x, y - 2, 204, 34))
-            pygame.draw.rect(self.screen, BLUE, (x + 202 - bar_width, y, bar_width, 30))
+            pygame.draw.rect(self.screen, RED, (x + 202 - bar_width, y, bar_width, 30))
         else:
             pygame.draw.rect(self.screen, WHITE, (x - 2, y - 2, 204, 34))
-            pygame.draw.rect(self.screen, BLUE, (x, y, bar_width, 30))
+            pygame.draw.rect(self.screen, PURPLE, (x, y, bar_width, 30))
 
     # Function for drawing texts
     def draw_text(self, text, font, text_col, x, y):
@@ -88,8 +90,8 @@ class SFGameEnv(gym.Env):
         # Game variables
         self.round_over = False
         # Create instances of fighter
-        self.fighter_1 = Fighter(controls_p1, False, 100, 280, self.chara_sheet, CHARA_ANIMATION_STEPS)
-        self.fighter_2 = Fighter(controls_p2, True, 600, 280, self.chara_sheet, CHARA_ANIMATION_STEPS)
+        self.fighter_1 = Fighter(controls_p1, False, 100, 280, self.chara_sheet_p1, CHARA_ANIMATION_STEPS)
+        self.fighter_2 = Fighter(controls_p2, True, 600, 280, self.chara_sheet_p2, CHARA_ANIMATION_STEPS)
 
         return self._get_obs(), self._get_info()
         
@@ -130,7 +132,7 @@ class SFGameEnv(gym.Env):
             reward +=10
 
         distance = abs(self.fighter_1.binx - self.fighter_2.binx)
-        reward += (1 / (distance+1)) * 200
+        reward += (1 / (distance+1)) * 50
 
         return reward
     
@@ -138,7 +140,7 @@ class SFGameEnv(gym.Env):
         return {}
     
     def _get_obs(self):
-        return np.array([self.fighter_1.health, self.fighter_2.health, self.fighter_1.binx, self.fighter_2.binx])
+        return np.array([ round(self.fighter_1.health / 10), round(self.fighter_2.health / 10), self.fighter_1.binx, self.fighter_2.binx])
 
 
     def render(self):

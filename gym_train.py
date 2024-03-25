@@ -2,6 +2,7 @@ import gym
 from sfgame_env import SFGameEnv
 import pygame
 import numpy as np
+import matplotlib.pyplot as plt
 
 # Register the environment
 gym.register(
@@ -10,7 +11,7 @@ gym.register(
     kwargs={} 
 )
 
-test = [0]
+#q_table = np.load('q_table_v1.npy')
 
 # Test the environment
 env = gym.make('SFGame-v0')
@@ -41,11 +42,14 @@ all_penalties = []
 
 print("Beging training.\n")
 
+# Liste pour stocker les récompenses de chaque épisode
+rewards_per_episode = []
+
 # Run the session X times
-for i in range(1, 500):
+for i in range(1, 1000):
     print(f"Episode: {i}")
     state = env.reset()[0]
-    epochs, penalties, reward, = 0, 0, 0
+    epochs, penalties, reward = 0, 0, 0
     done = False
     
     if stop:
@@ -77,20 +81,32 @@ for i in range(1, 500):
                 done = True
 
         #pygame.time.wait(10)
+    
+    # Append the reward for this episode to the list
+    rewards_per_episode.append(reward)
 
 print("Training finished.\n")
 
+# Plot rewards per episode
+plt.plot(rewards_per_episode)
+plt.xlabel('Episode')
+plt.ylabel('Reward')
+plt.title('Reward per Episode')
+plt.show()
+
 print(q_table.shape)
-for i in range(q_table.shape[0]):
-    if np.sum(q_table[i,:]):
-        print(q_table[i,:])
+#for i in range(q_table.shape[0]):
+#    if np.sum(q_table[i,:]):
+#        print(q_table[i,:])
 
 for i in range(q_table.shape[1]):
     print("action", i, ":",np.sum(q_table[:,i]))
 
-
 print("Scores: ", env.score)
 print("Penalties incurred: {}".format(penalties))
+
+# Save q table trained
+np.save('q_table_v1.npy', q_table)
 
 # Exit game
 pygame.quit()
