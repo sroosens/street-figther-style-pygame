@@ -135,7 +135,6 @@ class SFGameEnv(gym.Env):
         reward += (1 / (distance+1)) * 50
 
         if (self.fighter_1.binx < 1) or (SCREEN_WIDTH / 64) - self.fighter_1.binx < 1:
-            print("close to wall")
             reward -= 20
 
         return reward
@@ -153,7 +152,7 @@ class SFGameEnv(gym.Env):
         self.draw_health_bar(self.fighter_1.health, 20, 20, True)
         self.draw_health_bar(self.fighter_2.health, 406, 20, False)
         self.draw_text("P1: " + str(self.score[0]), self.font, WHITE, 50, 60)
-        self.draw_text("P2: " + str(self.score[1]), self.font, WHITE, 400, 60)
+        self.draw_text("AGENT : " + str(self.score[1]), self.font, WHITE, 400, 60)
         self.draw_text("KO", self.font, RED, 300, 20)
         # Update fighters logic
         self.fighter_1.update()

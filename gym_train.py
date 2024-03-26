@@ -42,11 +42,11 @@ all_penalties = []
 
 print("Beging training.\n")
 
-# Liste pour stocker les récompenses de chaque épisode
 rewards_per_episode = []
+winrate_per_episode = []
 
 # Run the session X times
-for i in range(1, 1000):
+for i in range(1, 5000):
     print(f"Episode: {i}")
     state = env.reset()[0]
     epochs, penalties, reward = 0, 0, 0
@@ -82,8 +82,9 @@ for i in range(1, 1000):
 
         #pygame.time.wait(10)
     
-    # Append the reward for this episode to the list
+    # Append the reward and win rate for this episode
     rewards_per_episode.append(reward)
+    winrate_per_episode.append(env.score[1] / env.score[0])
 
 print("Training finished.\n")
 
@@ -92,6 +93,12 @@ plt.plot(rewards_per_episode)
 plt.xlabel('Episode')
 plt.ylabel('Reward')
 plt.title('Reward per Episode')
+plt.show()
+# Plot winrate per episode
+plt.plot(winrate_per_episode)
+plt.xlabel('Episode')
+plt.ylabel('Win rate')
+plt.title('Win rate per Episode')
 plt.show()
 
 print(q_table.shape)
