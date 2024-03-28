@@ -5,6 +5,11 @@ class Fighter():
     # Defines
     SPEED = 5
     GRAVITY = 2
+    ACT_LEFT = 0
+    ACT_RIGHT = 1
+    ACT_JUMP = 2
+    ACT_BLOCK = 3
+    ACT_PUNCH = 4
 
     def __init__(self, controls, flip, x, y, sprite_sheet, animation_steps):
         self.rect = pygame.Rect(x, y, 70, 160)
@@ -28,6 +33,7 @@ class Fighter():
         self.punching = False
         self.blocking = False
         self.attack_cooldown = 0
+        self.hit_cooldown = 0
         self.attack_type = 0 # 1: punch ; 2: kick
         self.controls = controls
 
@@ -92,24 +98,20 @@ class Fighter():
         key = pygame.key.get_pressed()
 
         if not self.attacking and self.alive and not round_over:
-            if action == 0: #left
+            if action == self.ACT_LEFT: #left
                 dx = -self.SPEED
                 self.running = True
-            if action == 1: # right
+            if action == self.ACT_RIGHT: # right
                 dx = self.SPEED
                 self.running = True
-            if action == 2 and not self.jumping:
+            if action == self.ACT_JUMP and not self.jumping:
                 self.vel_y = -30
                 self.jumping = True
-            if action == 3:
+            if action == self.ACT_BLOCK:
                 self.blocking = True
 
             # Allow attack while doing movements    
-            if action == 4 or action == 5:
-                if action == 4:
-                    self.attack_type = 1
-                if action == 5:
-                    self.attack_type = 2
+            if action == self.ACT_PUNCH:
                 self.attack(debug_surf, target)
         
         self.update_movement(dx, dy, screen_width, screen_height, target)
@@ -156,6 +158,9 @@ class Fighter():
         if self.attack_cooldown > 0:
             self.attack_cooldown -= 1
 
+        if self.hit_cooldown > 0:
+            self.hit_cooldown -= 1
+
         # Apply gravity
         self.vel_y += self.GRAVITY
         dy += self.vel_y 
@@ -182,7 +187,7 @@ class Fighter():
         self.rect.y += dy
 
     def attack(self, debug_surf, target):
-        if self.attack_cooldown == 0: # and not self.attacking and not self.hit:
+        if (self.attack_cooldown == 0) and (self.hit_cooldown == 0): # and not self.attacking and not self.hit:
             self.attacking = True
             attacking_rect = pygame.Rect(self.rect.centerx - (self.rect.width * self.flip), self.rect.y + 10, self.rect.width, self.rect.height / 4)
 
@@ -244,7 +249,7 @@ class Fighter():
                     self.hit = False
                     # If the player was in the middle of an attack, then the attack is stopped
                     self.attacking = False
-                    self.attack_cooldown = 30
+                    self.hit_cooldown = 30
 
         
     # Update current action with requested one

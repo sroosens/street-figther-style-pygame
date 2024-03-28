@@ -62,7 +62,7 @@ class SFGameEnv(gym.Env):
         # Setup available actions
         self.action_space = spaces.Discrete(5)
         # Setup available observations
-        self.observation_space = spaces.MultiDiscrete([10+1, 10+1, 10+1, 10+1], dtype=int) #health p1, health p2, p1.x, p2.x, 
+        self.observation_space = spaces.MultiDiscrete([10+1, 10+1, 10+1, 10+1, 2, 2], dtype=int) #health p1, health p2, p1.x, p2.x, p1.endattack, p1.blocking
     
     # Function for drawing background
     def draw_bg(self):
@@ -86,7 +86,6 @@ class SFGameEnv(gym.Env):
         self.screen.blit(img, (x, y))
 
     def reset(self):
-        print("reset")
         # Game variables
         self.round_over = False
         # Create instances of fighter
@@ -143,7 +142,11 @@ class SFGameEnv(gym.Env):
         return {}
     
     def _get_obs(self):
-        return np.array([ round(self.fighter_1.health / 10), round(self.fighter_2.health / 10), self.fighter_1.binx, self.fighter_2.binx])
+        return np.array([ round(self.fighter_1.health / 10), 
+                          round(self.fighter_2.health / 10), 
+                          self.fighter_1.binx, self.fighter_2.binx,
+                          (self.fighter_1.attack_cooldown > 3),
+                          (self.fighter_1.blocking)])
 
 
     def render(self):
