@@ -62,7 +62,7 @@ class SFGameEnv(gym.Env):
         # Setup available actions
         self.action_space = spaces.Discrete(5)
         # Setup available observations
-        self.observation_space = spaces.MultiDiscrete([10+1, 10+1, 10+1, 10+1,], dtype=int) #health p1, health p2, p1.x, p2.x, p1.endattack
+        self.observation_space = spaces.MultiDiscrete([10+1, 10+1, 10+1, 10+1, 2], dtype=int) #health p1, health p2, p1.x, p2.x, p1.endattack
     
     # Function for drawing background
     def draw_bg(self):
