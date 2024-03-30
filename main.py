@@ -5,8 +5,8 @@ from fighter import Fighter
 pygame.init()
 
 # Defines
-SCREEN_WIDTH = 768
-SCREEN_HEIGHT = 494
+SCREEN_WIDTH = 640
+SCREEN_HEIGHT = 480
 RED = (255, 0, 0)
 BLUE = (0, 0, 255)
 WHITE = (255, 255, 255)
@@ -48,7 +48,8 @@ controls_p2 = {
 bg_image = pygame.image.load("assets/images/background/japan_1.png").convert_alpha()
 
 # Load sprite sheets
-chara_sheet = pygame.image.load("assets/sprites/ken.png").convert_alpha()
+chara_sheet_p1 = pygame.image.load("assets/sprites/ken.png").convert_alpha()
+chara_sheet_p2 = pygame.image.load("assets/sprites/ken_2.png").convert_alpha()
 
 # Define number of steps in each animation
 CHARA_ANIMATION_STEPS = [5, 3, 3, 5, 2, 2, 2, 5, 7, 1]
@@ -70,8 +71,8 @@ def draw_text(text, font, text_col, x, y):
   screen.blit(img, (x, y))
 
 # Create instances of fighter
-fighter_1 = Fighter(controls_p1, False, 100, 280, chara_sheet, CHARA_ANIMATION_STEPS)
-fighter_2 = Fighter(controls_p2, True, 600, 280, chara_sheet, CHARA_ANIMATION_STEPS)
+fighter_1 = Fighter(controls_p1, False, 100, 280, chara_sheet_p1, CHARA_ANIMATION_STEPS)
+fighter_2 = Fighter(controls_p2, True, 600, 280, chara_sheet_p2, CHARA_ANIMATION_STEPS)
 
 # Game loop
 run = True
@@ -88,7 +89,7 @@ while run:
 
     # Move fighterse
     fighter_1.move_player(SCREEN_WIDTH, SCREEN_HEIGHT, screen, fighter_2, round_over)
-    fighter_2.move_player(SCREEN_WIDTH, SCREEN_HEIGHT, screen, fighter_1, round_over)
+    fighter_2.move_basic_ai(SCREEN_WIDTH, SCREEN_HEIGHT, screen, fighter_1, round_over)
 
     # Update fighters logic
     fighter_1.update()

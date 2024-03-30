@@ -62,7 +62,7 @@ class SFGameEnv(gym.Env):
         # Setup available actions
         self.action_space = spaces.Discrete(5)
         # Setup available observations
-        self.observation_space = spaces.MultiDiscrete([10+1, 10+1, 10+1, 10+1, 2, 2], dtype=int) #health p1, health p2, p1.x, p2.x, p1.endattack, p1.blocking
+        self.observation_space = spaces.MultiDiscrete([10+1, 10+1, 10+1, 10+1,], dtype=int) #health p1, health p2, p1.x, p2.x, p1.endattack
     
     # Function for drawing background
     def draw_bg(self):
@@ -100,7 +100,6 @@ class SFGameEnv(gym.Env):
         #self.fighter_2.move_basic_ai(SCREEN_WIDTH, SCREEN_HEIGHT, self.screen, self.fighter_1, self.round_over)
         self.fighter_2.move_agent(SCREEN_WIDTH, SCREEN_HEIGHT, self.screen, self.fighter_1, self.round_over, action)
 
-        reward = self.compute_reward()
         info = self._get_info()
         obs = self._get_obs()
 
@@ -113,6 +112,8 @@ class SFGameEnv(gym.Env):
                 self.score[0] += 1
                 self.round_over = True
 
+        reward = self.compute_reward()
+
         #if self.render_mode == "human":
         self.render()
 
@@ -122,8 +123,10 @@ class SFGameEnv(gym.Env):
         reward = -10
         if self.round_over:
             if self.fighter_2.alive:
+                print("win")
                 reward +=500
             else:
+                print("loose")
                 reward -=500
         elif self.fighter_2.health < self.fighter_1.health:
             reward -= 10
@@ -144,9 +147,9 @@ class SFGameEnv(gym.Env):
     def _get_obs(self):
         return np.array([ round(self.fighter_1.health / 10), 
                           round(self.fighter_2.health / 10), 
-                          self.fighter_1.binx, self.fighter_2.binx,
-                          (self.fighter_1.attack_cooldown > 3),
-                          (self.fighter_1.blocking)])
+                          self.fighter_1.binx, 
+                          self.fighter_2.binx,
+                          (self.fighter_1.attack_cooldown > 5)])
 
 
     def render(self):

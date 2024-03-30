@@ -195,7 +195,7 @@ class Fighter():
                 if not target.blocking:
                     target.health -= 10
                     target.hit = True
-            pygame.draw.rect(debug_surf, (0, 255, 0), attacking_rect)
+            #pygame.draw.rect(debug_surf, (0, 255, 0), attacking_rect)
 
     def draw(self, surface, color):
         #pygame.draw.rect(surface, color, self.rect)

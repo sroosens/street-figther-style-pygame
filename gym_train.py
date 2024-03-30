@@ -85,6 +85,7 @@ for i in range(1, 5000):
     # Append the reward and win rate for this episode
     rewards_per_episode.append(reward)
     winrate_per_episode.append(env.score[1] / env.score[0])
+    print("Winrate: ", winrate_per_episode[-1])
 
 print("Training finished.\n")
 
