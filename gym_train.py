@@ -46,7 +46,7 @@ rewards_per_episode = []
 winrate_per_episode = []
 
 # Run the session X times
-for i in range(1, 5000):
+for i in range(1, 700):
     print(f"Episode: {i}")
     state = env.reset()[0]
     epochs, penalties, reward = 0, 0, 0
