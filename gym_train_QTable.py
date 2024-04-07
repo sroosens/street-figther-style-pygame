@@ -1,13 +1,19 @@
 import gym
-from sfgame_env import SFGameEnv
+from StreetFighterGameEnv import SFGameEnv
 import pygame
 import numpy as np
 import matplotlib.pyplot as plt
 
+#
+# Q Table Learning
+# Q-Table is just a fancy name for a simple lookup table where we calculate the maximum expected future rewards for action at each state. 
+# Basically, this table will guide us to the best action at each state.
+#
+
 # Register the environment
 gym.register(
     id='SFGame-v0',
-    entry_point='sfgame_env:SFGameEnv', 
+    entry_point='StreetFighterGameEnv:SFGameEnv', 
     kwargs={} 
 )
 
