@@ -24,7 +24,7 @@ env.render()
 
 # Set frame rate
 clock = pygame.time.Clock()
-FPS = 320
+FPS = 120
 
 done = False
 stop = False
@@ -59,7 +59,7 @@ rewards_per_episode = []
 winrate_per_episode = []
 
 # Run the session X times
-for i in range(1, 10):
+for i in range(1, 1000):
     print(f"Episode: {i}")
     observation = env.reset()[0]
     epochs, penalties, reward = 0, 0, 0
@@ -115,6 +115,8 @@ plt.show()
 
 print("Scores: ", env.score)
 print("Penalties incurred: {}".format(penalties))
+
+agent.plot_cost()
 
 # Exit game
 pygame.quit()

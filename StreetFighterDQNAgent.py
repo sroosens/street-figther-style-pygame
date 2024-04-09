@@ -101,7 +101,7 @@ class SFDQNAgent:
         return action
 
     def replace_target_net_parameters(self):
-        print("target parameters replaced")
+        #print("target parameters replaced")
         t_params = tf.get_collection('target_net_params')
         e_params = tf.get_collection('eval_net_params')
 
@@ -224,8 +224,6 @@ class SFDQNAgent:
                 self.q_next_outputs = Z3
 
     def plot_cost(self):
-        import matplotlib
-        matplotlib.use("MacOSX")
         import matplotlib.pyplot as plt
         plt.plot(np.arange(len(self.cost_history)), self.cost_history)
         plt.ylabel('Cost')
