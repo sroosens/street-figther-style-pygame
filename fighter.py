@@ -94,9 +94,6 @@ class Fighter():
         self.rect.height = 160
         self.offset = [15, 0]
 
-        # Get key pressed
-        key = pygame.key.get_pressed()
-
         if not self.attacking and self.alive and not round_over:
             if action == self.ACT_LEFT: #left
                 dx = -self.SPEED
@@ -243,13 +240,13 @@ class Fighter():
                 # Check if an attack was executed
                 if self.action == 2:
                     self.attacking = False
-                    self.attack_cooldown = 80
+                    self.attack_cooldown = 40
                 # Check if damage was taken
                 if self.action == 7:
                     self.hit = False
                     # If the player was in the middle of an attack, then the attack is stopped
                     self.attacking = False
-                    self.hit_cooldown = 60
+                    self.hit_cooldown = 20
 
         
     # Update current action with requested one

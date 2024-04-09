@@ -65,7 +65,7 @@ class SFDQNAgent:
         self.sess.run(init)
 
         # 'Saver' op to save and restore all the variables
-        #self.saver = tf.train.Saver()
+        self.saver = tf.train.Saver()
 
         # Restore model
         #if load_path is not None:
@@ -114,10 +114,10 @@ class SFDQNAgent:
             self.replace_target_net_parameters()
 
         # Save checkpoint
-        #if self.learn_step_counter % (self.replace_target_iter * 10) == 0:
-            #if self.save_path is not None:
-                #save_path = self.saver.save(self.sess, self.save_path)
-                #print("Model saved in file: %s" % save_path)
+        if self.learn_step_counter % (self.replace_target_iter * 10) == 0:
+            if self.save_path is not None:
+                save_path = self.saver.save(self.sess, self.save_path)
+                print("Model saved in file: %s" % save_path)
 
         # Get a memory sample
         index_range = min(self.memory_counter, self.memory_size)
