@@ -1,0 +1,8 @@
+Package              Version
+-------------------- -----------
+gym                  0.26.2     
+matplotlib           3.5.3
+numpy                1.18.5
+protobuf             3.20.3
+pygame               2.5.2
+tensorflow           1.15.5

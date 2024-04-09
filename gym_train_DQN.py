@@ -32,6 +32,11 @@ stop = False
 #
 # TEST
 #
+
+# Load checkpoint
+load_path = "weights/StreetFighter-v0.ckpt"
+save_path = "weights/StreetFighter-v0-2.ckpt"
+
 agent = SFDQNAgent(  n_y=env.action_space.n,
                     n_x=env.observation_space.shape[0],
                     learning_rate=0.01,
@@ -39,7 +44,9 @@ agent = SFDQNAgent(  n_y=env.action_space.n,
                     memory_size=500,
                     batch_size=32,
                     epsilon_max=0.9,
-                    epsilon_greedy_increment=0.001
+                    epsilon_greedy_increment=0.001,
+                    load_path = load_path,
+                    save_path = save_path
                 )
 
 # For plotting metrics

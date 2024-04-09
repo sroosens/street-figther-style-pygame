@@ -28,8 +28,6 @@ class SFDQNAgent:
         self.batch_size = batch_size
         self.reward_decay = reward_decay # this is gamma
 
-        tf.compat.v1.disable_v2_behavior()
-
         if save_path is not None:
             self.save_path = save_path
 
@@ -50,8 +48,8 @@ class SFDQNAgent:
         # Config for networks
         n_l1 = 10
         n_l2 = 10
-        W_init = tf.compat.v1.truncated_normal_initializer(stddev=0.1)
-        b_init = tf.compat.v1.truncated_normal_initializer(stddev=0.1)
+        W_init = tf.contrib.layers.xavier_initializer(seed=1)
+        b_init = tf.contrib.layers.xavier_initializer(seed=1)
         self.build_eval_network(n_l1, n_l2, W_init, b_init)
         self.build_target_network(n_l1, n_l2, W_init, b_init)
 
@@ -67,12 +65,12 @@ class SFDQNAgent:
         self.sess.run(init)
 
         # 'Saver' op to save and restore all the variables
-        self.saver = tf.train.Saver()
+        #self.saver = tf.train.Saver()
 
         # Restore model
-        if load_path is not None:
-            self.load_path = load_path
-            self.saver.restore(self.sess, self.load_path)
+        #if load_path is not None:
+            #self.load_path = load_path
+            #self.saver.restore(self.sess, self.load_path)
 
     def store_transition(self, s, a, r, s_):
         # Replace old memory with new memory
@@ -116,10 +114,10 @@ class SFDQNAgent:
             self.replace_target_net_parameters()
 
         # Save checkpoint
-        if self.learn_step_counter % (self.replace_target_iter * 10) == 0:
-            if self.save_path is not None:
-                save_path = self.saver.save(self.sess, self.save_path)
-                print("Model saved in file: %s" % save_path)
+        #if self.learn_step_counter % (self.replace_target_iter * 10) == 0:
+            #if self.save_path is not None:
+                #save_path = self.saver.save(self.sess, self.save_path)
+                #print("Model saved in file: %s" % save_path)
 
         # Get a memory sample
         index_range = min(self.memory_counter, self.memory_size)
