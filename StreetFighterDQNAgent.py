@@ -114,10 +114,10 @@ class SFDQNAgent:
             self.replace_target_net_parameters()
 
         # Save checkpoint
-        if self.learn_step_counter % (self.replace_target_iter * 10) == 0:
-            if self.save_path is not None:
-                save_path = self.saver.save(self.sess, self.save_path)
-                print("Model saved in file: %s" % save_path)
+        #if self.learn_step_counter % (self.replace_target_iter * 10) == 0:
+        #    if self.save_path is not None:
+        #        save_path = self.saver.save(self.sess, self.save_path)
+        #        print("Model saved in file: %s" % save_path)
 
         # Get a memory sample
         index_range = min(self.memory_counter, self.memory_size)
@@ -224,6 +224,9 @@ class SFDQNAgent:
                 self.q_next_outputs = Z3
 
     def plot_cost(self):
+        if self.save_path is not None:
+                save_path = self.saver.save(self.sess, self.save_path)
+                print("Model saved in file: %s" % save_path)
         import matplotlib.pyplot as plt
         plt.plot(np.arange(len(self.cost_history)), self.cost_history)
         plt.ylabel('Cost')
