@@ -90,8 +90,11 @@ for i in range(1, 700):
     
     # Append the reward and win rate for this episode
     rewards_per_episode.append(reward)
-    winrate_per_episode.append(env.score[1] / env.score[0])
-    print("Winrate: ", winrate_per_episode[-1])
+    if env.score[0] != 0:
+        winrate_per_episode.append(env.score[1] / env.score[0])
+    else :
+        winrate_per_episode.append(env.score[1])
+    print("K/D Ratio: ", winrate_per_episode[-1])
 
 print("Training finished.\n")
 
@@ -104,8 +107,8 @@ plt.show()
 # Plot winrate per episode
 plt.plot(winrate_per_episode)
 plt.xlabel('Episode')
-plt.ylabel('Win rate')
-plt.title('Win rate per Episode')
+plt.ylabel('K/D Ratio')
+plt.title('K/D Ratio per Episode')
 plt.show()
 
 print(q_table.shape)

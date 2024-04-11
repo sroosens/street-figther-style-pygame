@@ -85,8 +85,11 @@ for i in range(1, 1000):
         if done:
             # Append the reward and win rate for this episode
             rewards_per_episode.append(reward)
-            winrate_per_episode.append(env.score[1] / env.score[0])
-            print("Winrate: ", winrate_per_episode[-1])
+            if env.score[0] != 0:
+                winrate_per_episode.append(env.score[1] / env.score[0])
+            else :
+                winrate_per_episode.append(env.score[1])
+            print("K/D Ratio: ", winrate_per_episode[-1])
             break
 
         # Event handlera
@@ -109,8 +112,8 @@ plt.show()
 # Plot winrate per episode
 plt.plot(winrate_per_episode)
 plt.xlabel('Episode')
-plt.ylabel('Win rate')
-plt.title('Win rate per Episode')
+plt.ylabel('K/D Ratio')
+plt.title('K/D Ratio per Episode')
 plt.show()
 
 print("Scores: ", env.score)
