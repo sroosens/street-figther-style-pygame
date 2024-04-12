@@ -22,16 +22,16 @@ controls_p1 = {
             'right': pygame.K_d,
             'jump': pygame.K_z,
             'crouch': pygame.K_s,
-            'attack1': pygame.K_a,
+            'attack1': pygame.K_SPACE,
             'attack2': pygame.K_e
         }
 
 controls_p2 = {
-            'left': pygame.K_k,
-            'right': pygame.K_m,
-            'jump': pygame.K_o,
-            'crouch' : pygame.K_l,
-            'attack1': pygame.K_i,
+            'left': pygame.K_LEFT,
+            'right': pygame.K_RIGHT,
+            'jump': pygame.K_UP,
+            'crouch' : pygame.K_DOWN,
+            'attack1': pygame.K_KP_ENTER,
             'attack2': pygame.K_p
         }
 
@@ -96,8 +96,10 @@ class SFGameEnv(gym.Env):
         
 
     def step(self, action):
+        #self.fighter_1.move_player(SCREEN_WIDTH, SCREEN_HEIGHT, self.screen, self.fighter_2, self.round_over)
         self.fighter_1.move_basic_ai(SCREEN_WIDTH, SCREEN_HEIGHT, self.screen, self.fighter_2, self.round_over)
-        #self.fighter_2.move_basic_ai(SCREEN_WIDTH, SCREEN_HEIGHT, self.screen, self.fighter_1, self.round_over)
+        
+        # Fighter 2 = IA Agent
         self.fighter_2.move_agent(SCREEN_WIDTH, SCREEN_HEIGHT, self.screen, self.fighter_1, self.round_over, action)
 
         info = self._get_info()
