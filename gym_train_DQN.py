@@ -58,8 +58,10 @@ print("Beging training.\n")
 rewards_per_episode = []
 winrate_per_episode = []
 
+total_steps_counter = 0
+
 # Run the session X times
-for i in range(1, 1000):
+for i in range(1, 500):
     print(f"Episode: {i}")
     observation = env.reset()[0]
     epochs, penalties, reward = 0, 0, 0
@@ -80,7 +82,8 @@ for i in range(1, 1000):
         #Store transition
         agent.store_transition(observation, action, reward, observation_)
 
-        agent.learn()
+        if total_steps_counter > 1000:
+            agent.learn()
 
         if done:
             # Append the reward and win rate for this episode
@@ -92,14 +95,18 @@ for i in range(1, 1000):
             print("K/D Ratio: ", winrate_per_episode[-1])
             break
 
+        total_steps_counter += 1
+
+        # Save observation
+        observation = observation_
+
         # Event handlera
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 stop = True
                 done = True
 
-    # Save observation
-    observation = observation_
+    
 
 print("Training finished.\n")
 

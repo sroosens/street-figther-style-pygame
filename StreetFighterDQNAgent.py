@@ -53,7 +53,11 @@ class SFDQNAgent:
         self.build_eval_network(n_l1, n_l2, W_init, b_init)
         self.build_target_network(n_l1, n_l2, W_init, b_init)
 
-        self.sess = tf.Session()
+        # Select GPU for training
+        gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=0.8)  # Adjust the fraction as needed
+        config = tf.ConfigProto(gpu_options=gpu_options)
+
+        self.sess = tf.Session(config=config)
 
         self.cost_history = []
 
