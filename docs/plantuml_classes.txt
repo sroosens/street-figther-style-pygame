@@ -1,5 +1,70 @@
 @startuml classes
 set namespaceSeparator none
+package "gym package" {
+    class "ActionWrapper" as gym.core.ActionWrapper {
+        {abstract} action(action)
+        {abstract} reverse_action(action)
+        step(action)
+    }
+    class "Env" as gym.core.Env {
+        action_space : spaces.Space[ActType]
+        metadata : Dict[str, Any]
+        np_random
+        observation_space : spaces.Space[ObsType]
+        render_mode : Optional[str]
+        reward_range : tuple
+        spec : str
+        unwrapped
+        {abstract} close()
+        {abstract} render() -> Optional[Union[RenderFrame, List[RenderFrame]]]
+        reset() -> Tuple[ObsType, dict]
+        {abstract} step(action: ActType) -> Tuple[ObsType, float, bool, bool, dict]
+    }
+    class "ObservationWrapper" as gym.core.ObservationWrapper {
+        {abstract} observation(observation)
+        reset()
+        step(action)
+    }
+    class "RewardWrapper" as gym.core.RewardWrapper {
+        {abstract} reward(reward)
+        step(action)
+    }
+    class "Wrapper" as gym.core.Wrapper {
+        action_space
+        env
+        metadata
+        np_random
+        observation_space
+        render_mode
+        reward_range
+        spec
+        unwrapped
+        class_name()
+        close()
+        render() -> Optional[Union[RenderFrame, List[RenderFrame]]]
+        reset() -> Tuple[ObsType, dict]
+        step(action: ActType) -> Tuple[ObsType, float, bool, bool, dict]
+    }
+    gym.core.ActionWrapper --|> gym.core.Wrapper
+    gym.core.ObservationWrapper --|> gym.core.Wrapper
+    gym.core.RewardWrapper --|> gym.core.Wrapper
+    gym.core.Wrapper --|> gym.core.Env
+    gym.core.Env --o gym.core.Wrapper : env
+}
+
+class "DQNAgent" as agent_DQN.DQNAgent {
+  ...
+  build_eval_network(n_l1, n_l2, W_init, b_init)
+  build_target_network(n_l1, n_l2, W_init, b_init)
+  choose_action(observation)
+  learn()
+  plot_cost()
+  replace_target_net_parameters()
+  save_model()
+  store_transition(s, a, r, s_)
+}
+
+
 class "AI" as fighter.AI {
   attack_type : int
   blocking : bool
@@ -120,16 +185,21 @@ file "play_mult.py" {
     }
 }
 
+StreetFighterGameEnv.SFGameEnv --|> Env
+
 fighter.AI --|> fighter.Fighter
 fighter.Agent --|> fighter.Fighter
 fighter.Player --|> fighter.Fighter
 StreetFighterGameEnv.SFGameEnv --> fighter.AI
 StreetFighterGameEnv.SFGameEnv --> fighter.Agent
 
+
 MainPlay --> fighter.Player
 MainTrainQ --> StreetFighterGameEnv.SFGameEnv
 MainTestQ --> StreetFighterGameEnv.SFGameEnv
 MainTrainDQN --> StreetFighterGameEnv.SFGameEnv
+MainTrainDQN --> agent_DQN.DQNAgent
 MainTestDQN --> StreetFighterGameEnv.SFGameEnv
+MainTestDQN --> agent_DQN.DQNAgent
 
 @enduml

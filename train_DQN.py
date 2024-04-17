@@ -17,7 +17,7 @@ gym.register(
     kwargs={} 
 )
 
-# Test the environment
+# Setup environment
 env = gym.make('SFGame-v0')
 obs_t = env.reset()
 env.render()

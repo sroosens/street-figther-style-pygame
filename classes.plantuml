@@ -1,24 +1,42 @@
 @startuml classes
 set namespaceSeparator none
-class "SFGameEnv" as StreetFighterGameEnv.SFGameEnv {
-  action_space : Discrete
-  bg_image
-  chara_sheet_p1
-  chara_sheet_p2
-  fighter_1 : AI
-  fighter_2 : Agent
-  font : Font
-  observation_space : MultiDiscrete
-  round_over : bool
-  score : list
-  screen
-  close()
-  compute_reward()
-  draw_bg()
-  draw_health_bar(health, x, y, flip)
-  draw_text(text, font, text_col, x, y)
-  render()
-  reset()
-  step(action)
+class "DQNAgent" as agent_DQN.DQNAgent {
+  X
+  X_
+  Y
+  batch_size : int
+  cost
+  cost_history : list
+  epsilon : float, int
+  epsilon_greedy_increment : float
+  epsilon_max : float
+  learn_step_counter : int
+  load_path
+  loss
+  lr : float
+  memory_a : ndarray
+  memory_counter : int
+  memory_r : ndarray
+  memory_s : ndarray
+  memory_s_ : ndarray
+  memory_size : int
+  n_x
+  n_y
+  q_eval_outputs
+  q_next_outputs
+  replace_target_iter : int
+  reward_decay : float
+  save_path
+  saver
+  sess
+  train_op
+  build_eval_network(n_l1, n_l2, W_init, b_init)
+  build_target_network(n_l1, n_l2, W_init, b_init)
+  choose_action(observation)
+  learn()
+  plot_cost()
+  replace_target_net_parameters()
+  save_model()
+  store_transition(s, a, r, s_)
 }
 @enduml

@@ -26,7 +26,7 @@ env.render()
 
 # Set frame rate
 clock = pygame.time.Clock()
-FPS = 320
+FPS = 120
 
 done = False
 stop = False
