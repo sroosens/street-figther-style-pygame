@@ -2,7 +2,7 @@ import tensorflow as tf
 import numpy as np
 
 
-class SFDQNAgent:
+class DQNAgent:
     def __init__(
         self,
         n_y,
@@ -72,9 +72,12 @@ class SFDQNAgent:
         self.saver = tf.train.Saver()
 
         # Restore model
-        #if load_path is not None:
-            #self.load_path = load_path
-            #self.saver.restore(self.sess, self.load_path)
+        if load_path is not None:
+            self.load_path = load_path
+            self.saver.restore(self.sess, self.load_path)
+            print("Model loaded!")
+        else :
+            print("Init from new model!")
 
     def store_transition(self, s, a, r, s_):
         # Replace old memory with new memory
@@ -144,6 +147,7 @@ class SFDQNAgent:
         # Setup array of index for batch e.g. for batch size 32 it will be [0, 1, 2, ...31]
         batch_index = np.arange(self.batch_size, dtype=np.int32)
 
+
         # Get memory actions
         actions_index = batch_memory_a.astype(int)
 
@@ -154,7 +158,7 @@ class SFDQNAgent:
         _, self.cost = self.sess.run([self.train_op, self.loss], feed_dict={ self.X: batch_memory_s, self.Y: q_target_outputs } )
 
         # Save cost
-        self.cost_history.append(self.cost)
+        #self.cost_history.append(self.cost)
 
         # Increase epsilon to make it more likely over time to get actions from predictions instead of from random sample
         self.epsilon = min(self.epsilon_max, self.epsilon + self.epsilon_greedy_increment)
@@ -227,10 +231,12 @@ class SFDQNAgent:
                 Z3 = tf.matmul(W3, A2) + b3
                 self.q_next_outputs = Z3
 
-    def plot_cost(self):
+    def save_model(self):
         if self.save_path is not None:
-                save_path = self.saver.save(self.sess, self.save_path)
-                print("Model saved in file: %s" % save_path)
+            save_path = self.saver.save(self.sess, self.save_path)
+            print("Model saved in file: %s" % save_path)
+
+    def plot_cost(self):
         import matplotlib.pyplot as plt
         plt.plot(np.arange(len(self.cost_history)), self.cost_history)
         plt.ylabel('Cost')

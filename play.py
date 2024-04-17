@@ -1,5 +1,5 @@
 import pygame
-from fighter import Fighter
+from fighter import Player
 
 # Init pygame
 pygame.init()
@@ -71,8 +71,8 @@ def draw_text(text, font, text_col, x, y):
   screen.blit(img, (x, y))
 
 # Create instances of fighter
-fighter_1 = Fighter(controls_p1, False, 100, 280, chara_sheet_p1, CHARA_ANIMATION_STEPS)
-fighter_2 = Fighter(controls_p2, True, 600, 280, chara_sheet_p2, CHARA_ANIMATION_STEPS)
+fighter_1 = Player(False, SCREEN_WIDTH, SCREEN_HEIGHT, 100, 280, chara_sheet_p1, CHARA_ANIMATION_STEPS, controls_p1)
+fighter_2 = Player(True, SCREEN_WIDTH, SCREEN_HEIGHT, 480, 280, chara_sheet_p2, CHARA_ANIMATION_STEPS, controls_p2)
 
 # Game loop
 run = True
@@ -88,8 +88,8 @@ while run:
     draw_text("P2: " + str(score[1]), FONT, WHITE, 400, 60)
 
     # Move fighterse
-    fighter_1.move_player(SCREEN_WIDTH, SCREEN_HEIGHT, screen, fighter_2, round_over)
-    fighter_2.move_player(SCREEN_WIDTH, SCREEN_HEIGHT, screen, fighter_1, round_over)
+    fighter_1.move(screen, fighter_2, round_over)
+    fighter_2.move(screen, fighter_1, round_over)
 
     # Update fighters logic
     fighter_1.update()

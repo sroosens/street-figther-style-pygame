@@ -1,0 +1,24 @@
+@startuml classes
+set namespaceSeparator none
+class "SFGameEnv" as StreetFighterGameEnv.SFGameEnv {
+  action_space : Discrete
+  bg_image
+  chara_sheet_p1
+  chara_sheet_p2
+  fighter_1 : AI
+  fighter_2 : Agent
+  font : Font
+  observation_space : MultiDiscrete
+  round_over : bool
+  score : list
+  screen
+  close()
+  compute_reward()
+  draw_bg()
+  draw_health_bar(health, x, y, flip)
+  draw_text(text, font, text_col, x, y)
+  render()
+  reset()
+  step(action)
+}
+@enduml

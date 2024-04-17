@@ -1,0 +1,135 @@
+@startuml classes
+set namespaceSeparator none
+class "AI" as fighter.AI {
+  attack_type : int
+  blocking : bool
+  jumping : bool
+  offset : list
+  running : bool
+  vel_y : int
+  move(debug_surf, target, round_over)
+}
+class "Agent" as fighter.Agent {
+  ACT_BLOCK : int
+  ACT_JUMP : int
+  ACT_LEFT : int
+  ACT_PUNCH : int
+  ACT_RIGHT : int
+  blocking : bool
+  jumping : bool
+  offset : list
+  running : bool
+  vel_y : int
+  move(debug_surf, target, round_over, action)
+}
+class "Fighter" as fighter.Fighter {
+  GRAVITY : int
+  SPEED : int
+  action : int
+  alive : bool
+  animation_list : list
+  attack_cooldown : int
+  attack_type : int
+  attacking : bool
+  binx()
+  blocking : bool
+  flip : bool
+  frame_index : int
+  health : int
+  hit : bool
+  hit_cooldown : int
+  image
+  image_scale : int
+  jumping : bool
+  offset : list
+  punching : bool
+  rect
+  running : bool
+  screen_height
+  screen_width
+  size_x : int
+  size_y : int
+  update_time
+  vel_y : int
+  attack(debug_surf, target)
+  draw(surface, color)
+  fetch_sprites(sprite_sheet, animation_steps)
+  update()
+  update_action(new_action)
+  update_movement(dx, dy, target)
+}
+class "Player" as fighter.Player {
+  attack_type : int
+  blocking : bool
+  controls
+  jumping : bool
+  running : bool
+  vel_y : int
+  move(debug_surf, target, round_over)
+}
+
+class "GameEnvironment" as StreetFighterGameEnv.SFGameEnv {
+  action_space : Discrete
+  bg_image
+  chara_sheet_p1
+  chara_sheet_p2
+  fighter_1 : AI
+  fighter_2 : Agent
+  font : Font
+  observation_space : MultiDiscrete
+  round_over : bool
+  score : list
+  screen
+  close()
+  compute_reward()
+  draw_bg()
+  draw_health_bar(health, x, y, flip)
+  draw_text(text, font, text_col, x, y)
+  render()
+  reset()
+  step(action)
+}
+
+file "train_Q.py" {
+    class MainTrainQ {
+        + run()
+    }
+}
+
+file "test_Q.py" {
+    class MainTestQ {
+        + run()
+    }
+}
+
+file "train_DQN.py" {
+    class MainTrainDQN {
+        + run()
+    }
+}
+
+file "test_DQN.py" {
+    class MainTestDQN {
+        + run()
+    }
+}
+
+file "play_mult.py" {
+    class MainPlay {
+        + run()
+    }
+}
+
+fighter.AI --|> fighter.Fighter
+fighter.Agent --|> fighter.Fighter
+fighter.Player --|> fighter.Fighter
+StreetFighterGameEnv.SFGameEnv --> fighter.AI
+StreetFighterGameEnv.SFGameEnv --> fighter.Agent
+
+MainPlay --> fighter.Player
+MainTrainQ --> StreetFighterGameEnv.SFGameEnv
+MainTestQ --> StreetFighterGameEnv.SFGameEnv
+MainTrainDQN --> StreetFighterGameEnv.SFGameEnv
+MainTestDQN --> StreetFighterGameEnv.SFGameEnv
+
+@enduml

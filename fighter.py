@@ -5,14 +5,11 @@ class Fighter():
     # Defines
     SPEED = 5
     GRAVITY = 2
-    ACT_LEFT = 0
-    ACT_RIGHT = 1
-    ACT_JUMP = 2
-    ACT_BLOCK = 3
-    ACT_PUNCH = 4
 
-    def __init__(self, controls, flip, x, y, sprite_sheet, animation_steps):
+    def __init__(self, flip, screen_width, screen_height, x, y, sprite_sheet, animation_steps):
         self.rect = pygame.Rect(x, y, 70, 160)
+        self.screen_width = screen_width
+        self.screen_height = screen_height
         self.vel_y = 0
         self.size_x = 70
         self.size_y = 80
@@ -35,7 +32,6 @@ class Fighter():
         self.attack_cooldown = 0
         self.hit_cooldown = 0
         self.attack_type = 0 # 1: punch ; 2: kick
-        self.controls = controls
 
     @property
     def binx(self):
@@ -51,102 +47,7 @@ class Fighter():
             animation_list.append(temp_img_list)
         return animation_list
 
-    def move_player(self, screen_width, screen_height, debug_surf, target, round_over):
-        # Reset variables
-        dx = 0
-        dy = 0
-        self.running = False
-        self.blocking = False
-        self.attack_type = 0
-
-        # Get key pressed
-        key = pygame.key.get_pressed()
-
-        if not self.attacking and self.alive and not round_over:
-            if key[self.controls['crouch']]:
-                self.blocking = True
-            elif key[self.controls['left']]:
-                dx = -self.SPEED
-                self.running = True
-            elif key[self.controls['right']]:
-                dx = self.SPEED
-                self.running = True
-            elif key[self.controls['jump']] and not self.jumping:
-                self.vel_y = -30
-                self.jumping = True
-            
-            # Allow attack while doing movements    
-            if key[self.controls['attack1']] or key[self.controls['attack2']]:
-                self.attack(debug_surf, target)
-                if key[self.controls['attack1']]:
-                    self.attack_type = 1
-                if key[self.controls['attack2']]:
-                    self.attack_type = 2
-        
-        self.update_movement(dx, dy, screen_width, screen_height, target)
-
-    def move_agent(self, screen_width, screen_height, debug_surf, target, round_over, action):
-        # Reset variables
-        dx = 0
-        dy = 0
-        self.running = False
-        self.blocking = False
-        self.rect.height = 160
-        self.offset = [15, 0]
-
-        if not self.attacking and self.alive and not round_over:
-            if action == self.ACT_LEFT: #left
-                dx = -self.SPEED
-                self.running = True
-            if action == self.ACT_RIGHT: # right
-                dx = self.SPEED
-                self.running = True
-            if action == self.ACT_JUMP and not self.jumping:
-                self.vel_y = -30
-                self.jumping = True
-            if action == self.ACT_BLOCK:
-                self.blocking = True
-
-            # Allow attack while doing movements    
-            if action == self.ACT_PUNCH:
-                self.attack(debug_surf, target)
-        
-        self.update_movement(dx, dy, screen_width, screen_height, target)
-
-    def move_basic_ai(self, screen_width, screen_height, debug_surf, target, round_over):
-        dx = 0
-        dy = 0
-        self.running = False
-        self.blocking = False
-        self.attack_type = 0
-        self.rect.height = 160
-        self.offset = [15, 0]
-
-        if not self.attacking and self.alive and not round_over:
-
-            # Déterminer la direction vers laquelle l'IA doit se déplacer
-            if target.rect.centerx > self.rect.centerx:
-                dx = 3
-            else:
-                dx = -3
-
-            # Sauter si trop proche du joueur
-            if abs(target.rect.centerx - self.rect.centerx) > 100 and not self.jumping:
-                self.vel_y = -30
-                self.jumping = True
-
-            # If close enough
-            if abs(target.rect.centerx - self.rect.centerx) < 80:
-                ran = random.random()
-                if target.attack_cooldown > 0: # If opponent is attacking, block
-                    self.blocking = True
-                else: # Otherwise attack
-                    self.attack_type = 1
-                    self.attack(debug_surf, target)
-
-        self.update_movement(dx, dy, screen_width, screen_height, target)
-
-    def update_movement(self, dx, dy, screen_width, screen_height, target):
+    def update_movement(self, dx, dy, target):
         if target.rect.centerx > self.rect.centerx:
             self.flip = False
         else:
@@ -172,12 +73,12 @@ class Fighter():
         # Ensure fighter stays on screen
         if self.rect.left + dx < 0:
             dx = -self.rect.left
-        if self.rect.right + dx > screen_width:
-            dx = screen_width - self.rect.right
-        if self.rect.bottom + dy > screen_height - 30:
+        if self.rect.right + dx > self.screen_width:
+            dx = self.screen_width - self.rect.right
+        if self.rect.bottom + dy > self.screen_height - 30:
             self.vel_y = 0
             self.jumping = False
-            dy = screen_height - 30 - self.rect.bottom
+            dy = self.screen_height - 30 - self.rect.bottom
 
         # Update figther's position
         self.rect.x += dx
@@ -200,7 +101,6 @@ class Fighter():
         surface.blit(img, (self.rect.x - (self.offset[0] * self.image_scale), self.rect.y - (self.offset[1] * self.image_scale)))
 
     def update(self):
-
         # Update actions
         # Check if still alive
         if self.health <= 0:
@@ -247,11 +147,112 @@ class Fighter():
                     # If the player was in the middle of an attack, then the attack is stopped
                     self.attacking = False
                     self.hit_cooldown = 20
-
-        
-    # Update current action with requested one
+    
     def update_action(self, new_action):
         if new_action != self.action:
             self.action = new_action
             self.frame_index = 0
             self.update_time = pygame.time.get_ticks()
+
+class Player(Fighter):
+    def __init__(self, flip, screen_width, screen_height, x, y, sprite_sheet, animation_steps, controls):
+        super().__init__(flip, screen_width, screen_height, x, y, sprite_sheet, animation_steps)
+        self.controls = controls
+
+    def move(self, debug_surf, target, round_over):
+        dx = 0
+        dy = 0
+        self.running = False
+        self.blocking = False
+        self.attack_type = 0
+
+        key = pygame.key.get_pressed()
+
+        if not self.attacking and self.alive and not round_over:
+            if key[self.controls['crouch']]:
+                self.blocking = True
+            elif key[self.controls['left']]:
+                dx = -self.SPEED
+                self.running = True
+            elif key[self.controls['right']]:
+                dx = self.SPEED
+                self.running = True
+            elif key[self.controls['jump']] and not self.jumping:
+                self.vel_y = -30
+                self.jumping = True
+            
+            if key[self.controls['attack1']] or key[self.controls['attack2']]:
+                self.attack(debug_surf, target)
+                if key[self.controls['attack1']]:
+                    self.attack_type = 1
+                if key[self.controls['attack2']]:
+                    self.attack_type = 2
+        
+        self.update_movement(dx, dy, target)
+
+class AI(Fighter):
+    def __init__(self, flip, screen_width, screen_height, x, y, sprite_sheet, animation_steps):
+        super().__init__(flip, screen_width, screen_height, x, y, sprite_sheet, animation_steps)
+
+    def move(self, debug_surf, target, round_over):
+        dx = 0
+        dy = 0
+        self.running = False
+        self.blocking = False
+        self.attack_type = 0
+
+        if not self.attacking and self.alive and not round_over:
+            if target.rect.centerx > self.rect.centerx:
+                dx = 2
+            else:
+                dx = -2
+
+            if abs(target.rect.centerx - self.rect.centerx) > 100 and not self.jumping:
+                self.vel_y = -30
+                self.jumping = True
+
+            if abs(target.rect.centerx - self.rect.centerx) < 80:
+                ran = random.random()
+                if target.attack_cooldown > 0:
+                    self.blocking = True
+                else:
+                    self.attack_type = 1
+                    self.attack(debug_surf, target)
+
+        self.update_movement(dx, dy, target)
+
+class Agent(Fighter):
+    ACT_LEFT = 0
+    ACT_RIGHT = 1
+    ACT_JUMP = 2
+    ACT_BLOCK = 3
+    ACT_PUNCH = 4
+
+    def __init__(self, flip, screen_width, screen_height, x, y, sprite_sheet, animation_steps):
+        super().__init__(flip, screen_width, screen_height, x, y, sprite_sheet, animation_steps)
+
+    def move(self, debug_surf, target, round_over, action):
+        # Reset variables
+        dx = 0
+        dy = 0
+        self.running = False
+        self.blocking = False
+
+        if not self.attacking and self.alive and not round_over:
+            if action == self.ACT_LEFT: #left
+                dx = -self.SPEED
+                self.running = True
+            if action == self.ACT_RIGHT: # right
+                dx = self.SPEED
+                self.running = True
+            if action == self.ACT_JUMP and not self.jumping:
+                self.vel_y = -30
+                self.jumping = True
+            if action == self.ACT_BLOCK:
+                self.blocking = True
+
+            # Allow attack while doing movements    
+            if action == self.ACT_PUNCH:
+                self.attack(debug_surf, target)
+        
+        self.update_movement(dx, dy, target)

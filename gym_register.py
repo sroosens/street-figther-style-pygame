@@ -1,9 +1,9 @@
 import gym
-from StreetFighterGameEnv import SFGameEnv
+from game_environment import GameEnv
 
 # Register the environment
 gym.register(
     id='SFGame-v0',
-    entry_point='StreetFighterGameEnv:SFGameEnv', 
+    entry_point='game_environment:GameEnv', 
     kwargs={'test': None} 
 )

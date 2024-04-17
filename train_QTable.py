@@ -1,5 +1,5 @@
 import gym
-from StreetFighterGameEnv import SFGameEnv
+from game_environment import GameEnv
 import pygame
 import numpy as np
 import matplotlib.pyplot as plt
@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 # Register the environment
 gym.register(
     id='SFGame-v0',
-    entry_point='StreetFighterGameEnv:SFGameEnv', 
+    entry_point='game_environment:GameEnv', 
     kwargs={} 
 )
 
@@ -123,7 +123,7 @@ print("Scores: ", env.score)
 print("Penalties incurred: {}".format(penalties))
 
 # Save q table trained
-np.save('q_table_v1.npy', q_table)
+np.save('weights/QLearning/q_table_v1.npy', q_table)
 
 # Exit game
 pygame.quit()

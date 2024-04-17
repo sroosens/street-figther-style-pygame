@@ -3,7 +3,8 @@ from gym import spaces
 from gym.spaces import Box, Dict
 import numpy as np
 import pygame
-from fighter import Fighter
+from fighter import AI
+from fighter import Agent
 
 # Defines
 SCREEN_WIDTH = 640
@@ -35,10 +36,10 @@ controls_p2 = {
             'attack2': pygame.K_p
         }
 
-class SFGameEnv(gym.Env):
+class GameEnv(gym.Env):
 
     def __init__(self):
-        super(SFGameEnv, self).__init__()
+        super(GameEnv, self).__init__()
 
         pygame.init()
 
@@ -89,18 +90,15 @@ class SFGameEnv(gym.Env):
         # Game variables
         self.round_over = False
         # Create instances of fighter
-        self.fighter_1 = Fighter(controls_p1, False, 100, 280, self.chara_sheet_p1, CHARA_ANIMATION_STEPS)
-        self.fighter_2 = Fighter(controls_p2, True, 600, 280, self.chara_sheet_p2, CHARA_ANIMATION_STEPS)
+        self.fighter_1 = AI(False, SCREEN_WIDTH, SCREEN_HEIGHT, 100, 280, self.chara_sheet_p1, CHARA_ANIMATION_STEPS)
+        self.fighter_2 = Agent(True, SCREEN_WIDTH, SCREEN_HEIGHT, 480, 280, self.chara_sheet_p2, CHARA_ANIMATION_STEPS)
 
         return self._get_obs(), self._get_info()
         
 
     def step(self, action):
-        #self.fighter_1.move_player(SCREEN_WIDTH, SCREEN_HEIGHT, self.screen, self.fighter_2, self.round_over)
-        self.fighter_1.move_basic_ai(SCREEN_WIDTH, SCREEN_HEIGHT, self.screen, self.fighter_2, self.round_over)
-        
-        # Fighter 2 = IA Agent
-        self.fighter_2.move_agent(SCREEN_WIDTH, SCREEN_HEIGHT, self.screen, self.fighter_1, self.round_over, action)
+        self.fighter_1.move(self.screen, self.fighter_2, self.round_over)
+        self.fighter_2.move(self.screen, self.fighter_1, self.round_over, action)
 
         info = self._get_info()
         obs = self._get_obs()
