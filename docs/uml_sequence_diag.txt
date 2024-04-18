@@ -1,0 +1,48 @@
+@startuml
+TrainDQN -> Gym: Register Environment
+TrainDQN -> Gym: Make Environment
+Gym -> Environment: Initialize
+Environment -> Gym: Get Environment
+Gym -> TrainDQN: Get Environment
+TrainDQN -> AgentDQN: Initialize
+
+AgentDQN -> AgentDQN: Build Evaluation Network
+AgentDQN -> AgentDQN: Build Target Network
+
+alt load path valid
+    AgentDQN -> AgentDQN: Load Model
+else load path invalid
+end
+
+AgentDQN -> AgentDQN: Run Session
+
+loop 1000 times
+  TrainDQN -> Environment: Reset
+  Environment -> TrainDQN: Get Obs
+  loop until break
+    TrainDQN -> AgentDQN: Choose Action
+    AgentDQN -> TrainDQN: Get Action
+    TrainDQN -> Environment: Step (Execute Action)
+    Environment -> Fighters : Move Fighters
+    Fighters -> Fighters: Trigger Actions
+    Fighters -> Fighters: Update Movements
+    Environment -> Environment: Get Obs
+    Environment -> Environment: Compute Reward
+    Environment -> Environment: Render
+    Environment -> Fighters: Update
+    Environment -> Fighters: Draw
+    Environment -> TrainDQN: Get Obs, Reward, Done
+    TrainDQN -> AgentDQN: Store Transition
+    TrainDQN -> AgentDQN: Learn
+    alt Done
+      TrainDQN -> TrainDQN: Append Reward
+      TrainDQN -> TrainDQN: break
+    end
+    TrainDQN -> TrainDQN: Save Observation
+  end
+end
+
+TrainDQN -> AgentDQN: Save Model
+TrainDQN -> AgentDQN: Display Graph
+
+@enduml
