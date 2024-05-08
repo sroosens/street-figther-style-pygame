@@ -50,7 +50,7 @@ rewards_per_episode = []
 winrate_per_episode = []
 
 # Run the session X times
-for i in range(1, 3):
+for i in range(1, 100):
     print(f"Episode: {i}")
     observation = env.reset()[0]
     epochs, penalties, reward = 0, 0, 0
@@ -66,7 +66,7 @@ for i in range(1, 3):
         # Choose one action based on observation
         action = agent.choose_action(observation)
         # Pass the chosen action in the environment
-        observation, reward, done, info = env.step(action)
+        observation_, reward, done, info = env.step(action)
 
         if done:
             # Append the reward and win rate for this episode
@@ -77,6 +77,9 @@ for i in range(1, 3):
                 winrate_per_episode.append(env.score[1])
             print("K/D Ratio: ", winrate_per_episode[-1])
             break
+
+        # Save observation
+        observation = observation_
 
         # Event handler
         for event in pygame.event.get():
