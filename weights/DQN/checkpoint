@@ -1,2 +1,2 @@
-model_checkpoint_path: "StreetFighter-v2.ckpt"
-all_model_checkpoint_paths: "StreetFighter-v2.ckpt"
+model_checkpoint_path: "StreetFighter-v3.ckpt"
+all_model_checkpoint_paths: "StreetFighter-v3.ckpt"

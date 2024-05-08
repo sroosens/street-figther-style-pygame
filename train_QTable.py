@@ -52,7 +52,7 @@ rewards_per_episode = []
 winrate_per_episode = []
 
 # Run the session X times
-for i in range(1, 700):
+for i in range(1, 1000):
     print(f"Episode: {i}")
     state = env.reset()[0]
     epochs, penalties, reward = 0, 0, 0
@@ -123,7 +123,7 @@ print("Scores: ", env.score)
 print("Penalties incurred: {}".format(penalties))
 
 # Save q table trained
-np.save('weights/QLearning/q_table_v1.npy', q_table)
+np.save('weights/QLearning/q_table_v2.npy', q_table)
 
 # Exit game
 pygame.quit()

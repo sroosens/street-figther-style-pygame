@@ -35,7 +35,7 @@ stop = False
 
 # Load checkpoint
 load_path = "weights/DQN/StreetFighter-v1.ckpt"
-save_path = "weights/DQN/StreetFighter-v2.ckpt"
+save_path = "weights/DQN/StreetFighter-v3.ckpt"
 
 agent = DQNAgent(  n_y=env.action_space.n,
                     n_x=env.observation_space.shape[0],
