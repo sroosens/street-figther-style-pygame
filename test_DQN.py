@@ -25,7 +25,7 @@ done = False
 stop = False
 
 # Load model
-load_path = "weights/DQN/StreetFighter-v1.ckpt"
+load_path = "weights/DQN/StreetFighter_epoch144_0.95.ckpt"
 
 agent = DQNAgent(  n_y=env.action_space.n,
                     n_x=env.observation_space.shape[0],

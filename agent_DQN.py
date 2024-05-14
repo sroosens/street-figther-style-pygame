@@ -53,11 +53,7 @@ class DQNAgent:
         self.build_eval_network(n_l1, n_l2, W_init, b_init)
         self.build_target_network(n_l1, n_l2, W_init, b_init)
 
-        # Select GPU for training
-        gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=0.8)  # Adjust the fraction as needed
-        config = tf.ConfigProto(gpu_options=gpu_options)
-
-        self.sess = tf.Session(config=config)
+        self.sess = tf.Session()
 
         self.cost_history = []
 
@@ -158,7 +154,7 @@ class DQNAgent:
         _, self.cost = self.sess.run([self.train_op, self.loss], feed_dict={ self.X: batch_memory_s, self.Y: q_target_outputs } )
 
         # Save cost
-        #self.cost_history.append(self.cost)
+        self.cost_history.append(self.cost)
 
         # Increase epsilon to make it more likely over time to get actions from predictions instead of from random sample
         self.epsilon = min(self.epsilon_max, self.epsilon + self.epsilon_greedy_increment)

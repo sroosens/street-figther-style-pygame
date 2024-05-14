@@ -34,7 +34,7 @@ stop = False
 #
 
 # Load checkpoint
-load_path = "weights/DQN/StreetFighter-v1.ckpt"
+load_path = "weights/DQN/StreetFighter_epoch222_0.87.ckpt"
 save_path = "weights/DQN/StreetFighter-v3.ckpt"
 
 agent = DQNAgent(  n_y=env.action_space.n,
@@ -105,6 +105,8 @@ for i in range(1, 500):
             if event.type == pygame.QUIT:
                 stop = True
                 done = True
+
+
 
     
 
