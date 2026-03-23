@@ -12,7 +12,7 @@ gym.register(
 )
 
 # Load the trained Q-table
-q_table = np.load('weights/QLearning/q_table_v1.npy')
+q_table = np.load('weights/QLearning/q_table_v3.npy')
 
 # Test the environment
 env = gym.make('SFGame-v0')
